@@ -136,7 +136,7 @@ export default class extends Controller {
       await addIsochrone(1800, "#aaf683");
       await addIsochrone(900, "#60d394");
 
-      //addTrainLines();
+      addTrainLines();
       addTrainStations();
     });
 

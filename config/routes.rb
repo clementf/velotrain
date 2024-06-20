@@ -9,6 +9,7 @@ Rails.application.routes.draw do
 
   namespace :api do
     resources :train_stations, only: [:index]
+    resources :train_lines, only: [:index]
     resources :isochrones, only: [:index]
   end
 
