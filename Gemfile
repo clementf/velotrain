@@ -11,6 +11,7 @@ gem "propshaft"
 # Use postgresql as the database for Active Record
 gem "pg", "~> 1.1"
 gem "activerecord-postgis-adapter"
+gem "rgeo-geojson"
 
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
