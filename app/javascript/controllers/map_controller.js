@@ -104,7 +104,7 @@ export default class extends Controller {
       });
 
       map.addLayer({
-        id: "train_lines_labels",
+        id: "train_station_labels",
         type: "symbol",
         source: "train_stations",
         layout: {
@@ -119,6 +119,46 @@ export default class extends Controller {
           "text-halo-color": "rgba(255,255,255,0.5)",
           "text-halo-width": 1,
         },
+      });
+
+      // Add click event listener to the train stations layer
+      map.on("click", "train_station_labels", async function (e) {
+        const coordinates = e.features[0].geometry.coordinates.slice();
+
+        // get station information from api, based on the name
+        let station = await fetch(
+          `api/train_stations/${e.features[0].properties.name}`,
+        );
+
+        if (!station.ok) {
+          return;
+        }
+
+        station = await station.json();
+
+        new maplibregl.Popup()
+          .setLngLat(coordinates)
+          .setHTML(
+            `<h3 class="font-bold">${station.name}</h3>
+            <ul class="flex flex-wrap gap-1 flex-start">
+            ${station.lines
+              .map(
+                (line) =>
+                  `<li class="py-px px-2 font-medium text-xs rounded" style="background-color: #${line.bg_color}; color: #${line.text_color}">${line.short_name}</li>`,
+              )
+              .join("")}
+            </ul>
+            `,
+          )
+          .addTo(map);
+      });
+
+      map.on("mouseenter", "train_station_labels", function () {
+        map.getCanvas().style.cursor = "pointer";
+      });
+
+      map.on("mouseleave", "train_station_labels", function () {
+        map.getCanvas().style.cursor = "";
       });
     };
 

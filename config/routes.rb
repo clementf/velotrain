@@ -8,7 +8,8 @@ Rails.application.routes.draw do
   get "/" => "pages#home"
 
   namespace :api do
-    resources :train_stations, only: [:index]
+    resources :train_stations, only: [:index, :show]
+
     resources :train_lines, only: [:index]
     resources :isochrones, only: [:index]
   end
