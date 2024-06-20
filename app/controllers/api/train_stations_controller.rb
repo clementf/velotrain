@@ -1,5 +1,7 @@
 module Api
   class TrainStationsController < ApplicationController
+    caches_action :index
+
     def index
       @train_stations = TrainStation.all
 
