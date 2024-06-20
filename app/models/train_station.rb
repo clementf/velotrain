@@ -1,5 +1,5 @@
 class TrainStation < ApplicationRecord
-  attribute :lonlat, :st_point, geographic: true
+  attribute :lonlat, :st_point, geographic: true, srid: 4326
 
   def lon
     lonlat.x

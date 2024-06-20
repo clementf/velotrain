@@ -15,6 +15,7 @@ export default class extends Controller {
 
     window.map = map;
     let zoomLevel = 0;
+    let simplifiedZoom = 0;
 
     let firstSymbolId;
 
@@ -131,9 +132,9 @@ export default class extends Controller {
         }
       }
 
-      //await addIsochrone(3600, '#ffd97d');
-      //await addIsochrone(1800, '#aaf683');
-      //await addIsochrone(900, '#60d394');
+      await addIsochrone(3600, "#ffd97d");
+      await addIsochrone(1800, "#aaf683");
+      await addIsochrone(900, "#60d394");
 
       //addTrainLines();
       addTrainStations();
