@@ -1,24 +1,13 @@
-# README
+# VeloTrain
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This is the (future) version of https://velotrain.fr (the first was a Phoenix application).
 
-Things you may want to cover:
+## Features
 
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+- [x] Display train lines
+- [x] Display train stations
+- [x] Display isochrones (from a station, by bike)
+- [ ] Display basic information about a station
+- [ ] Search a specific station
+- [ ] Compute directions from A to B, using the train network
+- [ ] Display directions from A to B, using the train network and cycling
