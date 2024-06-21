@@ -11,7 +11,7 @@ class Gtfs::StopTime < ApplicationRecord
     trip_id_cache = Gtfs::Trip.pluck(:code, :id).to_h
     stop_id_cache = Gtfs::Stop.pluck(:code, :id).to_h
 
-    batch_size = 1000
+    batch_size = 4000
     batch = []
 
     CSV.foreach(file, headers: true) do |row|
