@@ -1,6 +1,6 @@
 module Api
   class IsochronesController < ApplicationController
-    caches_action :index, cache_path: proc { |c| "isochrones/#{c.params[:zoom]}/#{c.params[:range]}" }, expires_in: 1.hour
+    caches_action :index, cache_path: proc { |c| "isochrones/#{c.params[:zoom]}/#{c.params[:range]}" }
 
     def index
       if params[:zoom].present? && params[:range].present?
