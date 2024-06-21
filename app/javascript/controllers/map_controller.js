@@ -140,6 +140,9 @@ export default class extends Controller {
           .setLngLat(coordinates)
           .setHTML(
             `<h3 class="font-bold">${station.name}</h3>
+            <p class="text-xs my-1">${
+              station.trains_per_day
+            } trains aujourd'hui</p>
             <ul class="flex flex-wrap gap-1 flex-start">
             ${station.lines
               .map(

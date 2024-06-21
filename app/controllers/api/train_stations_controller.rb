@@ -30,6 +30,7 @@ module Api
 
       render json: {
         name: @train_station.name,
+        trains_per_day: @train_station.trains_per_day,
         lines: @train_station.stop_times.preload(:route).map(&:route).uniq.group_by(&:short_name).map do |short_name, routes|
           {
             short_name: short_name,
