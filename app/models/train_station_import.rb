@@ -13,6 +13,7 @@ class TrainStationImport
 
       TrainStation.find_or_initialize_by(code: row["Trigramme"]).update(
         name: row["Nom"],
+        drg: row["Segment(s) DRG"].first, # only take the first letter, which is the main segment (some are reported as "A:A" for example)
         lonlat: "POINT(#{longitude} #{latitude})"
       )
     end
