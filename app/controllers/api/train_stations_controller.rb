@@ -13,7 +13,8 @@ module Api
             geometry: RGeo::GeoJSON.encode(station.lonlat),
             properties: {
               name: station.name,
-              code: station.code
+              code: station.code,
+              drg: station.drg
             }
           }
         end

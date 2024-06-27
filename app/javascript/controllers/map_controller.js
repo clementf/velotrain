@@ -104,7 +104,7 @@ export default class extends Controller {
       });
 
       map.addLayer({
-        id: "train_station_labels",
+        id: "train_station_labels_A",
         type: "symbol",
         source: "train_stations",
         layout: {
@@ -113,7 +113,46 @@ export default class extends Controller {
           "text-size": 12,
           "text-anchor": "bottom",
         },
-        minzoom: 8,
+        minzoom: 7,
+        filter: ["==", ["get", "drg"], "A"], // Filter to display only features with drg property of "A"
+        paint: {
+          "text-color": "#333",
+          "text-halo-color": "rgba(255,255,255,0.5)",
+          "text-halo-width": 1,
+        },
+      });
+
+      map.addLayer({
+        id: "train_station_labels_B",
+        type: "symbol",
+        source: "train_stations",
+        layout: {
+          "text-field": ["get", "name"],
+          "text-font": ["Noto Sans Bold"],
+          "text-size": 12,
+          "text-anchor": "bottom",
+        },
+        minzoom: 9, // This layer will be visible from zoom level 10 and above
+        filter: ["==", ["get", "drg"], "B"], // Filter to display features with drg property of "A" or "B"
+        paint: {
+          "text-color": "#333",
+          "text-halo-color": "rgba(255,255,255,0.5)",
+          "text-halo-width": 1,
+        },
+      });
+
+      map.addLayer({
+        id: "train_station_labels_C",
+        type: "symbol",
+        source: "train_stations",
+        layout: {
+          "text-field": ["get", "name"],
+          "text-font": ["Noto Sans Bold"],
+          "text-size": 12,
+          "text-anchor": "bottom",
+        },
+        minzoom: 10,
+        filter: ["==", ["get", "drg"], "C"], // Filter to display features with drg property of "A" or "B"
         paint: {
           "text-color": "#333",
           "text-halo-color": "rgba(255,255,255,0.5)",
