@@ -45,6 +45,10 @@ module Routing
       path = []
       current = target
       while current != start
+        if trip_details[current].nil? # no path found
+          break
+        end
+
         path.unshift(trip_details[current].merge({from: previous_stops[current]}))
         current = previous_stops[current]
       end
