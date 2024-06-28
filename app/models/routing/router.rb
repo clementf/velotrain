@@ -16,7 +16,7 @@ module Routing
 
       Rails.logger.info "Finding shortest path..."
 
-      dijkstra.shortest_path(from, to, Time.parse("2024-06-21 #{time}"))
+      dijkstra.shortest_path(from, to, Time.zone.parse("2024-06-21 #{time}"))
     end
 
     # useful for debugging / console usage
