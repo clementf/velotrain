@@ -26,8 +26,13 @@ module Routing
 
       route_cache = Gtfs::Trip.pluck(:id, :gtfs_route_id).to_h
 
+      day = Date.parse("2024-06-21")
+      todays_services = Gtfs::ServiceDate.where(date: day).pluck(:service_id)
+      stop_times = Gtfs::StopTime.order(:gtfs_trip_id).joins(:trip).where(gtfs_trips: {service_id: todays_services})
+
       puts "Building graph..."
-      Gtfs::StopTime.order(:gtfs_trip_id).pluck(:gtfs_trip_id, :departure_time, :arrival_time, :gtfs_stop_id).group_by { |trip_id, _, _| trip_id }.each do |trip_id, times|
+
+      stop_times.pluck(:gtfs_trip_id, :departure_time, :arrival_time, :gtfs_stop_id).group_by { |trip_id, _, _| trip_id }.each do |trip_id, times|
         route_id = route_cache[trip_id]
 
         times.each_cons(2) do |from_stop_time, to_stop_time|
