@@ -12,7 +12,7 @@ module Routing
 
     def neighbors(node, current_time, current_route_id)
       @graph[node].select do |edge|
-        transfer_time_if_needed = (current_route_id != edge[:route_id]) ? 15 * 60 : 0
+        transfer_time_if_needed = (current_route_id.present? && current_route_id != edge[:route_id]) ? 15 * 60 : 0
 
         edge[:departure_time] >= current_time + transfer_time_if_needed
       end
