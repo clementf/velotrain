@@ -30,6 +30,9 @@ module Routing
       path.group_by { |segment| segment[:route_id] }.each do |route_id, segments|
         route = Gtfs::Route.find(route_id)
         pretty_path << "Route: #{route.long_name} \n"
+
+        stop_name = Gtfs::Stop.find(segments.first[:from]).name
+        pretty_path << "  #{segments.first[:departure_time].strftime("%H:%M")} - #{stop_name} \n"
         segments.each do |segment|
           stop_name = Gtfs::Stop.find(segment[:to]).name
           pretty_path << "  #{segment[:arrival_time].strftime("%H:%M")} - #{stop_name} \n"
