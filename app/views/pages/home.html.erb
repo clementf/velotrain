@@ -1,4 +1,20 @@
 <div class="w-screen h-screen">
+  <div class="absolute z-20 p-4 bg-white rounded-lg top-4 left-4">
+    <%= form_with method: :get, url: api_trips_path, data: { turbo_frame: 'trip-results' }  do |form| %>
+
+      <div class="my-2">
+        <%= form.combobox :from_stop_id, search_api_train_stations_path %>
+      </div>
+      <div class="my-2">
+        <%= form.combobox :to_stop_id, search_api_train_stations_path %>
+      </div>
+
+      <div>
+        <%= form.submit "Rechercher", class: "btn-primary" %>
+      </div>
+      <turbo-frame id="trip-results"></turbo-frame>
+    <% end %>
+  </div>
   <div class="absolute left-0 right-0 z-20 w-4/5 px-12 py-2 mx-auto text-xs font-medium text-center text-gray-700 md:text-left md:right-auto md:w-auto md:bottom-6 md:left-4 md:top-auto rounded-2xl top-2 md:py-6 bg-gray-50/95">
     <h1 class="flex items-center justify-center text-base font-bold md:justify-start gap-x-4">
       <span>

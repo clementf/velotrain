@@ -7,9 +7,17 @@ class Gtfs::Stop < ApplicationRecord
   scope :train_stations, -> { where("code LIKE '%OCETrain%' OR code LIKE '%OCETramTrain%'") }
   scope :bus_stops, -> { where("code LIKE '%OCECar%'") }
 
+  def self.train_station_by_name(name)
+    train_stations.find_by("lower(name) = ?", name.downcase)
+  end
+
   def trains_per_day(day: Date.today)
     todays_services = Gtfs::ServiceDate.where(date: day).pluck(:service_id)
     stop_times.joins(:trip).where(gtfs_trips: {service_id: todays_services}).count
+  end
+
+  def to_combobox_display
+    "#{name}"
   end
 
   def self.import(filepath)

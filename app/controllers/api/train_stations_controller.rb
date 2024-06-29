@@ -21,6 +21,11 @@ module Api
       }
     end
 
+    def search
+      @train_stations = Gtfs::Stop.train_stations.where("lower(name) LIKE ?", "%#{params[:q]&.downcase}%").limit(10)
+      render turbo_stream: helpers.async_combobox_options(@train_stations)
+    end
+
     def show
       @train_station = Gtfs::Stop.train_stations.find_by("lower(name) = ?", params[:id].downcase)
 
