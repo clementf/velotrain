@@ -1,21 +1,23 @@
 <div class="w-screen h-screen">
-  <div class="absolute z-20 p-4 bg-white rounded-lg top-4 left-4">
+  <div class="absolute z-20 px-8 py-4 bg-white rounded-lg top-4 left-4">
     <%= form_with method: :get, url: api_trips_path, data: { turbo_frame: 'trip-results' }  do |form| %>
-
-      <div class="my-2">
-        <%= form.combobox :from_stop_id, search_api_train_stations_path %>
+      <h2 class="text-lg font-bold text-gray-600">Itinéraire TER</h2>
+      <div class="my-2 mt-4">
+        <%= form.combobox :from_stop_id, search_api_train_stations_path, input: { placeholder: "Gare de départ" } %>
       </div>
       <div class="my-2">
-        <%= form.combobox :to_stop_id, search_api_train_stations_path %>
+        <%= form.combobox :to_stop_id, search_api_train_stations_path, input: { placeholder: "Gare d'arrivée" } %>
       </div>
 
       <div>
-        <%= form.submit "Rechercher", class: "btn-primary" %>
+        <%= form.submit "Rechercher", class: "btn-primary w-full mt-4" %>
       </div>
-      <turbo-frame id="trip-results"></turbo-frame>
+      <div class="my-4">
+        <turbo-frame id="trip-results"></turbo-frame>
+      </div>
     <% end %>
   </div>
-  <div class="absolute left-0 right-0 z-20 w-4/5 px-12 py-2 mx-auto text-xs font-medium text-center text-gray-700 md:text-left md:right-auto md:w-auto md:bottom-6 md:left-4 md:top-auto rounded-2xl top-2 md:py-6 bg-gray-50/95">
+  <div class="absolute left-0 right-0 z-20 w-4/5 px-12 py-2 mx-auto text-xs font-medium text-center text-gray-700 md:text-left md:w-auto md:bottom-10 md:right-4 md:left-auto md:top-auto rounded-2xl top-2 md:py-6 bg-gray-50/95">
     <h1 class="flex items-center justify-center text-base font-bold md:justify-start gap-x-4">
       <span>
       Carte de France du train vélo

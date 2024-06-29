@@ -4,6 +4,10 @@
 
 @layer components {
   .btn-primary {
-    @apply rounded-full bg-white px-4 py-2.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50;
+    @apply rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-emerald-400 hover:bg-emerald-600;
   }
+}
+
+.hw-combobox__main__wrapper {
+  --hw-combobox-width: 260px;
 }
