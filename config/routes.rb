@@ -14,6 +14,7 @@ Rails.application.routes.draw do
       end
     end
 
+    resources :trips, only: [:index, :show]
     resources :train_lines, only: [:index]
     resources :isochrones, only: [:index]
   end

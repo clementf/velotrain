@@ -1,0 +1,53 @@
+<turbo-frame id="trip-results">
+  <% if @result[:path].present? %>
+    <% @result[:path].group_by { |segment| segment[:route_id] }.each do |route_id, segments| %>
+      <% route = Gtfs::Route.find(route_id) %>
+      <div class="route-segment">
+        <h3>Route: <%= route.long_name %></h3>
+        <p><%= segments.first[:departure_time].in_time_zone.strftime("%H:%M") %> - <%= Gtfs::Stop.find(segments.first[:from]).name %></p>
+        <% segments.each do |segment| %>
+          <p><%= segment[:arrival_time].in_time_zone.strftime("%H:%M") %> - <%= Gtfs::Stop.find(segment[:to]).name %></p>
+        <% end %>
+      </div>
+    <% end %>
+  <% else %>
+    Pas de train
+  <% end %>
+<script>
+  ids = <%== @result[:path].flatten.map{ |segment| "#{segment[:to]}"}.prepend(@result[:start]) %>
+
+  fetch(`/api/trips/id?stop_ids=${ids.join(',')}`)
+    .then(response => response.json())
+    .then(data => {
+      let idx = 0
+      data.forEach((trip) => {
+        idx += 1
+        // clean up old layers until no more
+        while (window.map.getSource('trip_' + idx)) {
+          window.map.removeLayer('trip_' + idx)
+          window.map.removeSource('trip_' + idx)
+          idx += 1
+        }
+        window.map.addSource('trip_' + idx, {
+          type: 'geojson',
+          data: trip
+        })
+        window.map.addLayer({
+          id: 'trip_' + idx,
+          type: 'line',
+          source: 'trip_' + idx,
+          layout: {
+            'line-join': 'round',
+            'line-cap': 'round'
+          },
+          paint: {
+            'line-color': '#065f46',
+            'line-opacity': 0.8,
+            'line-width': 5
+          }
+        })
+      })
+    })
+</script>
+
+</turbo-frame>

@@ -3,13 +3,21 @@ module Routing
     def initialize
     end
 
+    # returns the singleton instance of the router or creates it if it doesn't exist
+    def self.get
+      @router ||= Router.new
+    end
+
     # returns the shortest path between the two stations, using a time dependent Dijkstra algorithm
     def shortest_path(from, to, time)
-      if from.is_a?(String)
+      if from.is_a?(String) && to.is_a?(String)
         from = Gtfs::Stop.train_stations.find_by!(name: from).id
-      end
-      if to.is_a?(String)
         to = Gtfs::Stop.train_stations.find_by!(name: to).id
+      end
+
+      if from.is_a?(Gtfs::Stop) && to.is_a?(Gtfs::Stop)
+        from = from.id
+        to = to.id
       end
 
       dijkstra = TimeDependentDijkstra.new(graph)

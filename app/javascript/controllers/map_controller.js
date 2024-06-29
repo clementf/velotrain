@@ -161,7 +161,19 @@ export default class extends Controller {
       });
 
       // Add click event listener to the train stations layer
-      map.on("click", "train_station_labels", async function (e) {
+      map.on("click", "train_station_labels_A", async function (e) {
+        await placeMarker(e);
+      });
+
+      map.on("click", "train_station_labels_B", async function (e) {
+        await placeMarker(e);
+      });
+
+      map.on("click", "train_station_labels_C", async function (e) {
+        await placeMarker(e);
+      });
+
+      async function placeMarker(e) {
         const coordinates = e.features[0].geometry.coordinates.slice();
 
         // get station information from api, based on the name
@@ -193,7 +205,7 @@ export default class extends Controller {
             `,
           )
           .addTo(map);
-      });
+      }
 
       map.on("mouseenter", "train_station_labels", function () {
         map.getCanvas().style.cursor = "pointer";
