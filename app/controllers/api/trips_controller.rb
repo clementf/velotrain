@@ -3,11 +3,12 @@ module Api
     def index
       router = Routing::Router.get
 
-      from = Gtfs::Stop.find(params[:from_stop_id])
-      to = Gtfs::Stop.find(params[:to_stop_id])
+      from = Gtfs::Stop.find_by(id: params[:from_stop_id])
+      to = Gtfs::Stop.find_by(id: params[:to_stop_id])
 
       if from.nil? || to.nil?
-        render json: {error: "Invalid from or to stop"}, status: :bad_request
+        @results = []
+        render "trips/index", status: :bad_request
         return
       end
 
