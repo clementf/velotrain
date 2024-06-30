@@ -73,6 +73,8 @@ module Routing
     private
 
     def check_path_validity(path, start)
+      return [] if path.empty?
+
       if path.first[:from] != start
         return []
       end

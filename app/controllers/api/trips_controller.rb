@@ -11,10 +11,11 @@ module Api
         return
       end
 
-      @result = router.shortest_path(from, to, Time.current.strftime("%H:%M:%S"))
-
-      if @result[:path].blank?
-        @result = router.shortest_path(from, to, "00:00:00")
+      # generate shortest path for now, in +1 hour, in +2 hours and in +4 hours
+      @results = []
+      [0, 1, 2, 4].each do |hours|
+        result = router.shortest_path(from, to, (Time.current + hours.hours).strftime("%H:%M:%S"))
+        @results << result if result[:path].present? && @results.none? { |r| r[:path] == result[:path] }
       end
 
       render "trips/index"
