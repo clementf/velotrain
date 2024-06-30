@@ -22,11 +22,11 @@
     <% last_segment = @result[:path].group_by { |segment| segment[:route_id] }.to_a.last %>
       <div class="flex items-center">
         <span class="mr-2 text-xs text-gray-500">
-          <%= last_segment[1][0][:arrival_time].in_time_zone.strftime("%H:%M") %>
+          <%= last_segment[1].last[:arrival_time].in_time_zone.strftime("%H:%M") %>
         </span>
         <span class="block w-3 h-3 mx-[5px] bg-white border-2 border-gray-800 rounded-full"></span>
         <span class="ml-2 font-bold text-gray-700">
-          <%= Gtfs::Stop.find(last_segment[1][0][:to]).name %>
+          <%= Gtfs::Stop.find(last_segment[1].last[:to]).name %>
         </span>
       </div>
   <% else %>
