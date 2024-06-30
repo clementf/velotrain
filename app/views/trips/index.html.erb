@@ -53,18 +53,22 @@
   <% if @results.present? %>
    ids = <%== @results.first[:path].flatten.map{ |segment| "#{segment[:to]}"}.prepend(@results.first[:start]) %>
 
+  if(window.trip_layers === undefined) {
+    window.trip_layers = []
+  }
+
   fetch(`/api/trips/id?stop_ids=${ids.join(',')}`)
     .then(response => response.json())
     .then(data => {
       let idx = 0
+      window.trip_layers.forEach((layer) => {
+        window.map.removeLayer(layer)
+        window.map.removeSource(layer)
+      })
+      window.trip_layers = []
       data.forEach((trip) => {
         idx += 1
-        // clean up old layers until no more
-        while (window.map.getSource('trip_' + idx)) {
-          window.map.removeLayer('trip_' + idx)
-          window.map.removeSource('trip_' + idx)
-          idx += 1
-        }
+        window.trip_layers.push('trip_' + idx)
         window.map.addSource('trip_' + idx, {
           type: 'geojson',
           data: trip
