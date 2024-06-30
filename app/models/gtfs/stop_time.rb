@@ -14,30 +14,32 @@ class Gtfs::StopTime < ApplicationRecord
     batch_size = 4000
     batch = []
 
-    CSV.foreach(file, headers: true) do |row|
-      gtfs_trip_id = trip_id_cache[row["trip_id"]]
-      gtfs_stop_id = stop_id_cache[row["stop_id"]]
+    Time.use_zone("Europe/Paris") do
+      CSV.foreach(file, headers: true) do |row|
+        gtfs_trip_id = trip_id_cache[row["trip_id"]]
+        gtfs_stop_id = stop_id_cache[row["stop_id"]]
 
-      next unless gtfs_trip_id && gtfs_stop_id
+        next unless gtfs_trip_id && gtfs_stop_id
 
-      begin
-        stop_time_attributes = {
-          gtfs_trip_id: gtfs_trip_id,
-          arrival_time: DateTime.parse(row["arrival_time"]),
-          departure_time: DateTime.parse(row["departure_time"]),
-          stop_sequence: row["stop_sequence"],
-          gtfs_stop_id: gtfs_stop_id
-        }
-      rescue Date::Error => e
-        puts "Error: #{e.message}"
-        next
-      end
+        begin
+          stop_time_attributes = {
+            gtfs_trip_id: gtfs_trip_id,
+            arrival_time: Time.zone.parse(row["arrival_time"]),
+            departure_time: Time.zone.parse(row["departure_time"]),
+            stop_sequence: row["stop_sequence"],
+            gtfs_stop_id: gtfs_stop_id
+          }
+        rescue Date::Error, ArgumentError => e
+          puts "Error: #{e.message}"
+          next
+        end
 
-      batch << Gtfs::StopTime.new(stop_time_attributes)
+        batch << Gtfs::StopTime.new(stop_time_attributes)
 
-      if batch.size >= batch_size
-        Gtfs::StopTime.import batch
-        batch = []
+        if batch.size >= batch_size
+          Gtfs::StopTime.import batch
+          batch = []
+        end
       end
     end
 

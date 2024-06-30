@@ -3,7 +3,7 @@
     <% @result[:path].group_by { |segment| segment[:route_id] }.each do |route_id, segments| %>
       <div class="flex items-center">
         <span class="mr-2 text-xs text-gray-500">
-          <%= segments.first[:departure_time].in_time_zone.strftime("%H:%M") %>
+          <%= display_time segments.first[:departure_time] %>
         </span>
         <span class="block w-3 h-3 mx-[5px] bg-white border-2 border-gray-800 rounded-full"></span>
         <span class="ml-2 font-bold text-gray-700">
@@ -22,7 +22,7 @@
     <% last_segment = @result[:path].group_by { |segment| segment[:route_id] }.to_a.last %>
       <div class="flex items-center">
         <span class="mr-2 text-xs text-gray-500">
-          <%= last_segment[1].last[:arrival_time].in_time_zone.strftime("%H:%M") %>
+          <%= display_time last_segment[1].last[:arrival_time] %>
         </span>
         <span class="block w-3 h-3 mx-[5px] bg-white border-2 border-gray-800 rounded-full"></span>
         <span class="ml-2 font-bold text-gray-700">
