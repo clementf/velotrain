@@ -17,12 +17,24 @@
           <%= Gtfs::Stop.find(segments.first[:from]).name %>
         </span>
       </div>
-      <div class="h-16 ml-[49px] -my-3 border-l-4 border-emerald-600/80 items-center flex">
-        <span class="ml-4 -mt-1 text-xs text-gray-500">
-          <% if segments.count > 1 %>
-            <%= pluralize(segments.count - 1, "arrêt") %>
-          <% end %>
-        </span>
+      <div class="py-4 ml-[49px] -my-3 border-l-4 border-emerald-600/80 items-center flex" data-controller="trip-segment">
+
+        <% if segments.count > 1 %>
+          <div>
+            <span class="py-1 ml-4 text-xs text-gray-500 front-semibold cursor-pointer hover:underline" data-action="click->trip-segment#toggle">
+              <%= pluralize(segments.count - 1, "arrêt") %>
+            </span>
+            <div class="hidden ml-6 text-xs font-medium text-gray-600 stops">
+              <% segments.each_with_index do |segment, index| %>
+                <% if index > 0 %>
+                  <div class="py-1 text-xs text-gray-500">
+                    <%= Gtfs::Stop.find(segment[:from]).name %>
+                  </div>
+                <% end %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
       </div>
     <% end %>
 
