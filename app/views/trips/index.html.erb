@@ -1,6 +1,6 @@
 <turbo-frame id="trip-results">
   <% if @results.empty? %>
-    <div class="flex items-center justify-center h-64 text-gray-500">
+    <div class="flex items-center justify-center h-32 text-gray-500">
       <span class="text-2xl">Aucun résultat</span>
     </div>
   <% end %>
@@ -21,14 +21,14 @@
 
         <% if segments.count > 1 %>
           <div>
-            <span class="py-1 ml-4 text-xs text-gray-500 front-semibold cursor-pointer hover:underline" data-action="click->trip-segment#toggle">
+            <span class="py-1 ml-4 text-xs text-gray-500 cursor-pointer front-semibold hover:underline" data-action="click->trip-segment#toggle">
               <%= pluralize(segments.count - 1, "arrêt") %>
             </span>
             <div class="hidden ml-6 text-xs font-medium text-gray-600 stops">
               <% segments.each_with_index do |segment, index| %>
                 <% if index > 0 %>
                   <div class="py-1 text-xs text-gray-500">
-                    <%= Gtfs::Stop.find(segment[:from]).name %>
+                    <%= Gtfs::Stop.find(segment[:from]).name %> - <%= display_time(segment[:departure_time]) %>
                   </div>
                 <% end %>
               <% end %>
@@ -50,7 +50,8 @@
     </div>
   <% end %>
 <script>
-  ids = <%== @results.first[:path].flatten.map{ |segment| "#{segment[:to]}"}.prepend(@results.first[:start]) %>
+  <% if @results.present? %>
+   ids = <%== @results.first[:path].flatten.map{ |segment| "#{segment[:to]}"}.prepend(@results.first[:start]) %>
 
   fetch(`/api/trips/id?stop_ids=${ids.join(',')}`)
     .then(response => response.json())
@@ -84,6 +85,7 @@
         })
       })
     })
+  <% end %>
 </script>
 
 </turbo-frame>
