@@ -10,7 +10,7 @@
       </div>
 
       <div>
-        <%= form.submit "Rechercher", class: "btn-primary w-full mt-4" %>
+        <%= form.submit "Rechercher", class: "btn-primary w-full mt-4", data: { turbo_submits_with: "..." } %>
       </div>
       <div class="my-4">
         <turbo-frame id="trip-results"></turbo-frame>
