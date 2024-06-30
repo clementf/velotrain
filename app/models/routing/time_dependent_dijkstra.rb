@@ -44,14 +44,22 @@ module Routing
       # Reconstruct the path
       path = []
       current = target
+      visited = Set.new
       while current != start
+
+        if visited.include?(current)
+          break
+        end
         if trip_details[current].nil? # no path found
           break
         end
 
         path.unshift(trip_details[current].merge({from: previous_stops[current]}))
+        visited.add(current)
         current = previous_stops[current]
       end
+
+      path = check_path_validity(path, start)
 
       {
         start_time: start_time,
@@ -60,6 +68,16 @@ module Routing
         target: target,
         path: path
       }
+    end
+
+    private
+
+    def check_path_validity(path, start)
+      if path.first[:from] != start
+        return []
+      end
+
+      path
     end
   end
 end
