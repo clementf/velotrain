@@ -1,11 +1,17 @@
 module Routing
   class Router
-    def initialize
+    def initialize(day)
+      @day = day
     end
 
     # returns the singleton instance of the router or creates it if it doesn't exist
     def self.get
-      @router ||= Router.new
+      if @day.nil? || @day != Date.today
+        @day = Date.today
+        @instance = Router.new(@day)
+      end
+
+      @instance
     end
 
     # returns the shortest path between the two stations, using a time dependent Dijkstra algorithm
@@ -24,7 +30,8 @@ module Routing
 
       Rails.logger.info "Finding shortest path..."
 
-      dijkstra.shortest_path(from, to, Time.zone.parse("2024-06-21 #{time}"))
+      day = @day.strftime("%Y-%m-%d")
+      dijkstra.shortest_path(from, to, Time.zone.parse("#{day} #{time}"))
     end
 
     # useful for debugging / console usage
@@ -60,8 +67,7 @@ module Routing
 
       route_cache = Gtfs::Trip.pluck(:id, :gtfs_route_id).to_h
 
-      day = Date.parse("2024-06-21")
-      todays_services = Gtfs::ServiceDate.where(date: day).pluck(:service_id)
+      todays_services = Gtfs::ServiceDate.where(date: @day).pluck(:service_id)
       stop_times = Gtfs::StopTime.order(:gtfs_trip_id).joins(:trip).where(gtfs_trips: {service_id: todays_services})
 
       Rails.logger.info "Building graph..."
@@ -70,7 +76,9 @@ module Routing
         route_id = route_cache[trip_id]
 
         times.each_cons(2) do |from_stop_time, to_stop_time|
-          @graph.add_edge(from_stop_time[3], to_stop_time[3], from_stop_time[1], to_stop_time[2], route_id)
+          departure_date_time = from_stop_time[1].change(day: @day.day, month: @day.month, year: @day.year)
+          arrival_date_time = to_stop_time[2].change(day: @day.day, month: @day.month, year: @day.year)
+          @graph.add_edge(from_stop_time[3], to_stop_time[3], departure_date_time, arrival_date_time, route_id)
         end
       end
 
