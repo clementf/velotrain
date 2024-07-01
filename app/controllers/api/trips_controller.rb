@@ -19,20 +19,37 @@ module Api
         @results << result if result[:path].present? && @results.none? { |r| r[:path] == result[:path] }
       end
 
+      @stop_ids = @results.first[:path].flatten.map { |segment| segment[:to] }.prepend(@results.first[:start]).join(",") if @results.any?
       render "trips/index"
     end
 
     def show
       stop_ids = params[:stop_ids].split(",").map(&:to_i)
       path = []
+      longitudes = []
+      latitudes = []
       stop_ids.each_cons(2) do |from, to|
         from_stop = Gtfs::Stop.find(from)
         to_stop = Gtfs::Stop.find(to)
 
+        longitudes << from_stop.geom.x
+        latitudes << from_stop.geom.y
+        longitudes << to_stop.geom.x
+        latitudes << to_stop.geom.y
+
         path << JSON.parse(TrainLinePath.new(from_stop, to_stop).find_path)
       end
 
-      render json: path
+      bounds =
+        [
+          [longitudes.min, latitudes.min],
+          [longitudes.max, latitudes.max]
+        ]
+
+      render json: {
+        path: path,
+        bounds: bounds
+      }
     end
   end
 end
