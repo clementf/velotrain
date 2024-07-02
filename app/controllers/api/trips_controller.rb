@@ -13,7 +13,7 @@ module Api
       end
 
       parsed_hour_from_params = begin
-        ActiveSupport::TimeZone["Europe/Paris"].parse(params["[departure_time(4i)]"] + ":" + params["[departure_time(5i)]"])
+        ActiveSupport::TimeZone["Europe/Paris"].parse(params["hour"] + ":" + params["minute"])
       rescue
         nil
       end

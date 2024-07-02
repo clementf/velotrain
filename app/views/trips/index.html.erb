@@ -7,7 +7,6 @@
       </div>
     <% end %>
     <% @results.each do |result| %>
-      <h3 class="mt-4 mb-2 text-xs text-gray-500">Dans <%= distance_of_time_in_words(Time.now.in_time_zone("Europe/Paris"), result[:path].first[:departure_time].in_time_zone("Europe/Paris")) %></h3>
       <% result[:path].group_by { |segment| segment[:route_id] }.each do |route_id, segments| %>
         <div class="flex items-center">
           <span class="w-8 mr-2 text-xs text-gray-500">
@@ -50,6 +49,7 @@
           <%= Gtfs::Stop.find(last_segment[1].last[:to]).name %>
         </span>
       </div>
+      <hr class="h-px mx-auto w-[80%] my-4 bg-gray-200" />
     <% end %>
   </div>
 

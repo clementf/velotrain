@@ -3,14 +3,15 @@
     <%= form_with method: :get, url: api_trips_path, data: { turbo_frame: 'trip-results' }  do |form| %>
       <h2 class="text-lg font-bold text-gray-600">Itinéraire TER</h2>
       <div class="my-2 mt-4">
-        <%= form.combobox :from_stop_id, search_api_train_stations_path, input: { placeholder: "Gare de départ" } %>
+        <%= form.combobox :from_stop_id, search_api_train_stations_path, input: { placeholder: "Gare de départ", required: true }, class: "form-input" %>
       </div>
       <div class="my-2">
-        <%= form.combobox :to_stop_id, search_api_train_stations_path, input: { placeholder: "Gare d'arrivée" } %>
+        <%= form.combobox :to_stop_id, search_api_train_stations_path, input: { placeholder: "Gare d'arrivée", required: true }, class: "form-input" %>
       </div>
 
-      <div class="my-2">
-        <%= form.time_select :departure_time, { minute_step: 15, default: Time.now.change(min: 0) } %>
+      <div class="flex my-2 gap-x-2">
+        <%= form.select :hour, (0..23).to_a.map { |h| [h, h] }, { include_blank: "Heure", selected: Time.now.hour }, class: "form-select" %>
+        <%= form.select :minute, (0..59).step(15).to_a.map { |m| [m, m] }, { include_blank: "Minute", selected: 0 }, class: "form-select" %>
       </div>
 
       <div>
