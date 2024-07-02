@@ -18,12 +18,16 @@ module Api
         nil
       end
 
-      # generate shortest path for now, in +1 hour, in +2 hours and in +4 hours
+      # generate shortest path for now, and the next 4 possible trains
       @results = []
-      [0, 1, 2, 4].each do |hours|
-        hour = parsed_hour_from_params || Time.current
-        result = router.shortest_path(from, to, (hour + hours.hours).utc.strftime("%H:%M:%S"))
-        @results << result if result[:path].present? && @results.none? { |r| r[:path] == result[:path] }
+
+      4.times do
+        start_time = (@results.last&.dig(:path, 0, :departure_time)&.+ 1.minutes) || parsed_hour_from_params || Time.current
+
+        result = router.shortest_path(from, to, start_time.utc.strftime("%H:%M:%S"))
+        break if result[:path].empty?
+
+        @results << result
       end
 
       @stop_ids = @results.first[:path].flatten.map { |segment| segment[:to] }.prepend(@results.first[:start]).join(",") if @results.any?
