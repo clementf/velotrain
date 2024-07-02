@@ -12,10 +12,17 @@ module Api
         return
       end
 
+      parsed_hour_from_params = begin
+        ActiveSupport::TimeZone["Europe/Paris"].parse(params["[departure_time(4i)]"] + ":" + params["[departure_time(5i)]"])
+      rescue
+        nil
+      end
+
       # generate shortest path for now, in +1 hour, in +2 hours and in +4 hours
       @results = []
       [0, 1, 2, 4].each do |hours|
-        result = router.shortest_path(from, to, (Time.current + hours.hours).strftime("%H:%M:%S"))
+        hour = parsed_hour_from_params || Time.current
+        result = router.shortest_path(from, to, (hour + hours.hours).utc.strftime("%H:%M:%S"))
         @results << result if result[:path].present? && @results.none? { |r| r[:path] == result[:path] }
       end
 

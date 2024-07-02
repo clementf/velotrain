@@ -9,12 +9,14 @@
         <%= form.combobox :to_stop_id, search_api_train_stations_path, input: { placeholder: "Gare d'arrivée" } %>
       </div>
 
+      <div class="my-2">
+        <%= form.time_select :departure_time, { minute_step: 15, default: Time.now.change(min: 0) } %>
+      </div>
+
       <div>
         <%= form.submit "Rechercher", class: "btn-primary w-full mt-4", data: { turbo_submits_with: "..." } %>
       </div>
-      <div class="my-4">
-        <turbo-frame id="trip-results"></turbo-frame>
-      </div>
+      <turbo-frame id="trip-results"></turbo-frame>
     <% end %>
   </div>
   <div class="absolute left-0 right-0 z-20 w-4/5 px-12 py-2 mx-auto text-xs font-medium text-center text-gray-700 md:text-left md:w-auto md:bottom-10 md:right-4 md:left-auto md:top-auto rounded-2xl top-2 md:py-6 bg-gray-50/95">
