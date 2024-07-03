@@ -9,15 +9,28 @@ export default class extends Controller {
 
     let ids = this.element.dataset.stopIds;
 
+    window.trip_layers.forEach((layer) => {
+      window.map.removeLayer(layer);
+      window.map.removeSource(layer);
+    });
+
+    window.trip_layers = [];
+
+    if (ids.length === 0) {
+      let bounds = [
+        [16, 51.5],
+        [-9, 42.37],
+      ]
+      window.map.fitBounds(bounds, {
+        duration: 400,
+      });
+      return;
+    }
+
     fetch(`/api/trips/id?stop_ids=${ids}`)
       .then((response) => response.json())
       .then((data) => {
         let idx = 0;
-        window.trip_layers.forEach((layer) => {
-          window.map.removeLayer(layer);
-          window.map.removeSource(layer);
-        });
-        window.trip_layers = [];
         data.path.forEach((trip) => {
           idx += 1;
           window.trip_layers.push("trip_" + idx);
