@@ -1,3 +1,12 @@
+GIT
+  remote: https://github.com/carlweis/heroicon-rails.git
+  revision: ef8f138ee4a14f774ee4d09efe6a798e41e3e29a
+  branch: main
+  specs:
+    heroicon-rails (0.2.8)
+      activesupport (>= 7.0.8)
+      nokogiri (>= 1.14.3)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -249,6 +258,7 @@ DEPENDENCIES
   activerecord-import
   activerecord-postgis-adapter
   bootsnap
+  heroicon-rails!
   hotwire_combobox
   importmap-rails
   jbuilder

@@ -26,6 +26,7 @@ gem "importmap-rails"
 gem "turbo-rails"
 gem "stimulus-rails"
 gem "hotwire_combobox"
+gem "heroicon-rails", github: "carlweis/heroicon-rails", branch: "main"
 
 # Use Tailwind CSS [https://github.com/rails/tailwindcss-rails]
 gem "tailwindcss-rails"

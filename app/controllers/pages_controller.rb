@@ -2,6 +2,7 @@ class PagesController < ApplicationController
   def home
     router = Routing::SncfApiRouter.new
 
+
     @from = Gtfs::Stop.find_by(id: params[:from_stop_id])
     @to = Gtfs::Stop.find_by(id: params[:to_stop_id])
 

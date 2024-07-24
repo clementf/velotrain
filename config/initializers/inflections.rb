@@ -17,4 +17,5 @@
 
 ActiveSupport::Inflector.inflections(:fr) do |inflect|
   inflect.plural "arrêt", "arrêts"
+  inflect.plural "changement", "changements"
 end
