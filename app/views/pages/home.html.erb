@@ -1,16 +1,16 @@
 <div class="w-screen h-screen">
   <div class="absolute z-20 px-8 py-4 rounded-lg shadow-lg bg-white/80 backdrop-blur-sm top-4 left-4">
     <%= form_with method: :get, url: "/", data: { turbo_frame: 'trip-results', turbo_action: "advance" }  do |form| %>
-      <h2 class="text-lg font-bold text-gray-600">Itinéraire TER</h2>
+      <h1 class="text-lg font-bold text-gray-600">Itinéraire VéloTrain</h1>
       <div class="my-2 mt-4">
-        <%= form.combobox :from_stop_id, search_api_train_stations_path, input: { placeholder: "Gare de départ", required: true, value: @from&.name }, class: "form-input" %>
+        <%= form.combobox :from_stop_id, search_api_train_stations_path(q: @from&.name), value: @from&.id, input: { placeholder: "Gare de départ", required: true, value: @from&.name}, class: "form-input" %>
       </div>
       <div class="my-2">
-        <%= form.combobox :to_stop_id, search_api_train_stations_path, input: { placeholder: "Gare d'arrivée", required: true, value: @to&.name }, class: "form-input" %>
+        <%= form.combobox :to_stop_id, search_api_train_stations_path(q: @to&.name), value: @to&.id, input: { placeholder: "Gare d'arrivée", required: true, value: @to&.name }, class: "form-input" %>
       </div>
 
       <div class="flex my-2 gap-x-2">
-        <%= form.select :hour, (0..23).to_a.map { |h| [h, h] }, { include_blank: "Heure", selected: Time.now.hour }, class: "form-select bg-transparent" %>
+        <%= form.select :hour, (0..23).to_a.map { |h| [h, h] }, { include_blank: "Heure", selected: params[:hour] || Time.now.hour }, class: "form-select bg-transparent" %>
         <%= form.select :minute, (0..59).step(15).to_a.map { |m| [m, m] }, { include_blank: "Minute", selected: 0 }, class: "form-select bg-transparent" %>
       </div>
 
