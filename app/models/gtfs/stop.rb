@@ -16,6 +16,14 @@ class Gtfs::Stop < ApplicationRecord
     stop_times.joins(:trip).where(gtfs_trips: {service_id: todays_services}).count
   end
 
+  def area_id
+    if parent_stop.present?
+      parent_stop.area_id
+    else
+      code.split(":").last.split("OCE").last
+    end
+  end
+
   def to_combobox_display
     "#{name}"
   end

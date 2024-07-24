@@ -1,5 +1,5 @@
 <div class="w-screen h-screen">
-  <div class="absolute z-20 px-8 py-4 bg-white rounded-lg top-4 left-4">
+  <div class="absolute z-20 px-8 py-4 rounded-lg shadow-lg bg-white/80 backdrop-blur-sm top-4 left-4">
     <%= form_with method: :get, url: "/", data: { turbo_frame: 'trip-results', turbo_action: "advance" }  do |form| %>
       <h2 class="text-lg font-bold text-gray-600">Itinéraire TER</h2>
       <div class="my-2 mt-4">
@@ -10,8 +10,8 @@
       </div>
 
       <div class="flex my-2 gap-x-2">
-        <%= form.select :hour, (0..23).to_a.map { |h| [h, h] }, { include_blank: "Heure", selected: Time.now.hour }, class: "form-select" %>
-        <%= form.select :minute, (0..59).step(15).to_a.map { |m| [m, m] }, { include_blank: "Minute", selected: 0 }, class: "form-select" %>
+        <%= form.select :hour, (0..23).to_a.map { |h| [h, h] }, { include_blank: "Heure", selected: Time.now.hour }, class: "form-select bg-transparent" %>
+        <%= form.select :minute, (0..59).step(15).to_a.map { |m| [m, m] }, { include_blank: "Minute", selected: 0 }, class: "form-select bg-transparent" %>
       </div>
 
       <div>
@@ -26,29 +26,34 @@
             </div>
           <% end %>
           <% @results.each do |result| %>
-            <% result[:path].group_by { |segment| segment[:route_id] }.each do |route_id, segments| %>
+            <% result[:sections].each_with_index do |section, idx| %>
               <div class="flex items-center">
-                <span class="w-8 mr-2 text-xs text-gray-500">
-                  <%= display_time segments.first[:departure_time] %>
+                <span class="w-8 mr-2 <%= idx == 0 ? 'font-bold text-sm text-gray-700' : 'text-xs text-gray-500'  %>">
+                  <%= display_time section[:departure_time] %>
                 </span>
                 <span class="block w-3 h-3 mx-[5px] bg-white border-2 border-gray-800 rounded-full"></span>
 
-                <span class="ml-2 font-bold text-gray-700">
-                  <%= Gtfs::Stop.find(segments.first[:from]).name %>
+                <span class="ml-2 text-gray-700 <%= idx == 0 || idx == result[:sections].size ? 'font-bold' : 'text-sm font-medium -mt-4' %>">
+                  <%= section[:from] %>
                 </span>
               </div>
-              <div class="py-4 ml-[49px] -my-3 border-l-4 border-emerald-600/80 items-center flex" data-controller="trip-segment">
 
-                <% if segments.count > 1 %>
+              <div class="py-6 ml-[49px] -my-4 border-l-4 border-emerald-600/80" data-controller="trip-segment">
+
+                <div class="px-2 inline-block ml-4 py-px font-medium text-center text-[11px] text-white bg-emerald-800 rounded">
+                  <%= section[:commercial_mode] %>
+                </div>
+
+                <% if section[:stops].count > 2 %>
                   <div>
-                    <span class="py-1 ml-4 text-xs text-gray-500 cursor-pointer front-semibold hover:underline" data-action="click->trip-segment#toggle">
-                      <%= pluralize(segments.count - 1, "arrêt") %>
+                    <span class="py-1 ml-4 text-xs text-gray-500 cursor-pointer front-medium hover:underline" data-action="click->trip-segment#toggle">
+                      <%= pluralize(section[:stops].count - 2, "arrêt") %>
                     </span>
                     <div class="hidden ml-6 text-xs font-medium text-gray-600 stops">
-                      <% segments.each_with_index do |segment, index| %>
+                      <% section[:stops].slice(0..-2).each_with_index do |stop, index| %>
                         <% if index > 0 %>
                           <div class="py-1 text-xs text-gray-500">
-                            <%= Gtfs::Stop.find(segment[:from]).name %> - <%= display_time(segment[:departure_time]) %>
+                            <%= stop[:name] %> - <%= display_time(stop[:departure_time]) %>
                           </div>
                         <% end %>
                       <% end %>
@@ -56,26 +61,27 @@
                   </div>
                 <% end %>
               </div>
+              <div class="flex items-center">
+                <span class="w-8 mr-2 <%= idx == result[:sections].size - 1 ? 'font-bold text-sm text-gray-700' : 'text-xs text-gray-500'  %>">
+                  <%= display_time section[:arrival_time] %>
+                </span>
+                <span class="block w-3 h-3 mx-[5px] bg-white border-2 border-gray-800 rounded-full"></span>
+                <% if idx == result[:sections].size - 1 %>
+                  <span class="ml-2 font-bold text-gray-700">
+                    <%= section[:to] %>
+                  </span>
+                <% end %>
+              </div>
             <% end %>
-
-            <% last_segment = result[:path].group_by { |segment| segment[:route_id] }.to_a.last %>
-            <div class="flex items-center">
-              <span class="w-8 mr-2 text-xs text-gray-500">
-                <%= display_time last_segment[1].last[:arrival_time] %>
-              </span>
-              <span class="block w-3 h-3 mx-[5px] bg-white border-2 border-gray-800 rounded-full"></span>
-              <span class="ml-2 font-bold text-gray-700">
-                <%= Gtfs::Stop.find(last_segment[1].last[:to]).name %>
-              </span>
-            </div>
             <hr class="h-px mx-auto w-[80%] my-4 bg-gray-200" />
+
           <% end %>
         </div>
 
       </turbo-frame>
     <% end %>
   </div>
-  <div class="absolute left-0 right-0 z-20 w-4/5 px-12 py-2 mx-auto text-xs font-medium text-center text-gray-700 md:text-left md:w-auto md:bottom-10 md:right-4 md:left-auto md:top-auto rounded-2xl top-2 md:py-6 bg-gray-50/95">
+  <div class="absolute left-0 right-0 z-20 w-4/5 px-12 py-2 mx-auto text-xs font-medium text-center text-gray-700 md:text-left md:w-auto md:bottom-10 md:right-4 md:left-auto md:top-auto rounded-2xl top-2 md:py-6 bg-white/80 backdrop-blur-sm">
     <h1 class="flex items-center justify-center text-base font-bold md:justify-start gap-x-4">
       <span>
         Carte de France du train vélo
