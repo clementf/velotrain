@@ -16,8 +16,8 @@
       </button>
       </div>
 
-      <div class="flex pr-10 my-2 gap-x-2">
-        <%= form.select :hour, (4..22).to_a.map { |h| ["#{h}h", h] }, { include_blank: "Heure", selected: params[:hour] || Time.now.hour }, class: "form-select bg-transparent" %>
+      <div class="flex pr-10 gap-x-2">
+        <%= form.select :hour, (4..22).step(4).to_a.map { |h| ["#{h}h", h] }, { include_blank: "Heure", selected: params[:hour] || Time.now.hour }, class: "form-select bg-transparent h-10" %>
       </div>
 
       <div class="pr-10">
