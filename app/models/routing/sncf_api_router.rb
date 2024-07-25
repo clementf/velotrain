@@ -19,7 +19,7 @@ module Routing
         journeys = journeys.select { |journey| journey[:duration] < 20.hours }
       end
 
-      journeys.sort_by { |journey| [journey[:transfers], journey[:duration]] }
+      journeys.sort_by { |journey| [journey[:duration]] }
     end
 
     private
