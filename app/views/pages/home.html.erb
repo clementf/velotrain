@@ -1,10 +1,10 @@
 <div class="w-screen h-screen">
-  <div class="absolute z-20 px-8 py-4 rounded-lg shadow-lg bg-white/80 backdrop-blur-sm top-4 left-4">
-    <%= form_with method: :get, url: "/", data: { turbo_frame: 'trip-results', turbo_action: "advance", controller: "search-form" }  do |form| %>
+  <div class="absolute z-20 px-8 py-4 rounded-lg shadow-lg bg-white/80 backdrop-blur-sm top-4 left-4" id="search-container">
       <h1 class="text-lg font-bold text-gray-600">Itinéraire VéloTrain</h1>
-      <div class="flex items-center gap-x-2">
-        <div>
-          <div class="my-2 mt-4">
+      <%= form_with method: :get, url: "/", data: { turbo_frame: 'trip-results', turbo_action: "advance", controller: "search-form" }  do |form| %>
+        <div class="flex items-center gap-x-2">
+          <div>
+            <div class="my-2">
             <%= form.combobox :from_stop_id, search_api_train_stations_path(q: @from&.name), value: @from&.id, input: { placeholder: "Gare de départ", required: true, value: @from&.name}, class: "form-input" %>
           </div>
           <div class="my-2">
@@ -107,34 +107,14 @@
 
       </turbo-frame>
     <% end %>
-  </div>
-  <div class="absolute left-0 right-0 z-20 w-4/5 px-12 py-2 mx-auto text-xs font-medium text-center text-gray-700 md:text-left md:w-auto md:bottom-10 md:right-4 md:left-auto md:top-auto rounded-2xl top-2 md:py-6 bg-white/80 backdrop-blur-sm">
-    <h1 class="flex items-center justify-center text-base font-bold md:justify-start gap-x-4">
-      <span>
-        Carte de France du train vélo
-      </span>
-      <span class="cursor-pointer md:hidden" onclick="toggleMenu()">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
-        </svg>
-
-      </span>
-    </h1>
-    <div class="hidden pt-2 menu md:block">
-      <div class="flex items-center py-1 gap-4">
-        <span class="bg-[#60d394]/80 rounded border border-gray-100 w-8 h-3"></span>
-        <span>15 min de vélo depuis une gare</span>
+      <div class="text-xs font-medium text-gray-500">
+        <div class="flex mb-1 gap-x-1">
+          <span class="bg-[#60d394]/80 rounded w-6 h-3"></span>
+          <span class="bg-[#aaf683]/80 rounded w-6 h-3"></span>
+          <span class="bg-[#ffd97d]/80 rounded w-6 h-3"></span>
+        </div>
+        <span>15 / 30 / 60 min de vélo depuis une gare</span>
       </div>
-      <div class="flex items-center py-1 gap-4">
-        <span class="bg-[#aaf683]/80 rounded border border-gray-100 w-8 h-3"></span>
-        <span>30 min de vélo depuis une gare</span>
-      </div>
-      <div class="flex items-center py-1 gap-4">
-        <span class="bg-[#ffd97d]/80 rounded border border-gray-100 w-8 h-3"></span>
-        <span>1h de vélo depuis une gare</span>
-      </div>
-      <a class="block w-full mt-2 text-xs font-bold text-right underline" href="/about">En savoir plus</a>
-    </div>
   </div>
   <div id="map" class="w-screen h-screen" data-controller="map">
 
