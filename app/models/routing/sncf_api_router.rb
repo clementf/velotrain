@@ -2,13 +2,30 @@ require 'net/http'
 
 module Routing
   class SncfApiRouter
-    def initialize
-    end
-
     def paths(from, to, datetime: Time.current, min_nb_journeys: 4)
       @min_nb_journeys = min_nb_journeys
       @datetime = datetime.strftime("%Y%m%dT%H%M%S")
 
+      set_from_and_to(from, to)
+
+      format_response(make_request)
+    end
+
+    private
+
+    def make_request
+      uri = URI(url)
+      req = Net::HTTP::Get.new(uri)
+      req["Authorization"] = Rails.application.credentials.sncf_api_key
+
+      Rails.logger.debug("URL: #{url}")
+
+      Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+        http.request(req)
+      end
+    end
+
+    def set_from_and_to(from, to)
       if from.is_a?(String) && to.is_a?(String)
         @from = Gtfs::Stop.train_stations.find_by!(name: from).area_id
         @to = Gtfs::Stop.train_stations.find_by!(name: to).area_id
@@ -18,19 +35,10 @@ module Routing
         @from = from.area_id
         @to = to.area_id
       end
+    end
 
-      uri = URI(url)
-      req = Net::HTTP::Get.new(uri)
-      req["Authorization"] = Rails.application.credentials.sncf_api_key
-
-      Rails.logger.debug("URL: #{url}")
-
-      response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
-        http.request(req)
-      end
-
+    def format_response(response)
       paris_time_zone = ActiveSupport::TimeZone["Europe/Paris"]
-
       JSON.parse(response.body).fetch("journeys", []).map do |journey|
         {
           departure_time: paris_time_zone.parse(journey.dig("departure_date_time")),
@@ -59,8 +67,6 @@ module Routing
         }
       end.sort_by { |journey| journey[:departure_time] }
     end
-
-    private
 
     def url
       "https://api.sncf.com/v1/coverage/sncf/journeys?from=stop_area:SNCF:#{@from}&to=stop_area:SNCF:#{@to}&datetime=#{@datetime}&#{allowed_ids}&min_nb_journeys=#{@min_nb_journeys}"
