@@ -4,6 +4,9 @@ class Gtfs::Stop < ApplicationRecord
   belongs_to :parent_stop, class_name: "Gtfs::Stop", foreign_key: "parent_stop_id", optional: true
   has_many :stop_times, class_name: "Gtfs::StopTime", foreign_key: "gtfs_stop_id"
 
+  has_many :saved_searches_from, class_name: "SavedSearch", foreign_key: "from_stop_id", dependent: :destroy
+  has_many :saved_searches_to, class_name: "SavedSearch", foreign_key: "to_stop_id", dependent: :destroy
+
   scope :train_stations, -> { where("code LIKE '%OCETrain%' OR code LIKE '%OCETramTrain%'") }
   scope :bus_stops, -> { where("code LIKE '%OCECar%'") }
 

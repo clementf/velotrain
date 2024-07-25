@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_27_144757) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_25_090111) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "postgis"
@@ -73,6 +73,18 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_27_144757) do
     t.index ["center"], name: "index_isochrones_on_center", using: :gist
   end
 
+  create_table "saved_searches", force: :cascade do |t|
+    t.bigint "from_stop_id", null: false
+    t.bigint "to_stop_id", null: false
+    t.datetime "datetime", null: false
+    t.jsonb "results", default: [], null: false
+    t.bigint "searches_count", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["from_stop_id"], name: "index_saved_searches_on_from_stop_id"
+    t.index ["to_stop_id"], name: "index_saved_searches_on_to_stop_id"
+  end
+
   create_table "train_lines", force: :cascade do |t|
     t.string "code"
     t.geometry "geom", limit: {:srid=>0, :type=>"geometry"}
@@ -94,4 +106,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_27_144757) do
   add_foreign_key "gtfs_stop_times", "gtfs_trips"
   add_foreign_key "gtfs_stops", "gtfs_stops", column: "parent_stop_id"
   add_foreign_key "gtfs_trips", "gtfs_routes"
+  add_foreign_key "saved_searches", "gtfs_stops", column: "from_stop_id"
+  add_foreign_key "saved_searches", "gtfs_stops", column: "to_stop_id"
 end
