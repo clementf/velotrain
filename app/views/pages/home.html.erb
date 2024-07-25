@@ -20,13 +20,13 @@
         <%= form.select :hour, (4..22).to_a.map { |h| ["#{h}h", h] }, { include_blank: "Heure", selected: params[:hour] || Time.now.hour }, class: "form-select bg-transparent" %>
       </div>
 
-      <div>
+      <div class="pr-10">
         <%= form.submit "Rechercher", class: "btn-primary w-full mt-4", data: { turbo_submits_with: "..." } %>
       </div>
       <turbo-frame id="trip-results">
         <div class="my-4 max-h-[calc(100vh-24rem)] overflow-y-auto" data-controller="trip-results">
 
-          <% if @results.empty? %>
+          <% if @results.empty? && @from.present? && @to.present? %>
             <div class="flex items-center justify-center h-32 text-gray-500">
               <span class="text-2xl">Aucun résultat</span>
             </div>
