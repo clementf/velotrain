@@ -52,6 +52,19 @@ export default class extends Controller {
         this.removeLayers();
         window.section_layers = [];
 
+        let bounds = new maplibregl.LngLatBounds();
+
+        entry.target.querySelectorAll('.section').forEach((section) => {
+          JSON.parse(section.dataset.geoJson).coordinates.forEach((coord) => {
+            bounds.extend(coord);
+          });
+        });
+
+        window.map.fitBounds(bounds, {
+          duration: 400,
+          padding: { top: 50, bottom: 50, left: document.querySelector('#search-container').offsetWidth + 50, right: 50 }
+        });
+
         entry.target.querySelectorAll('.section').forEach((section) => {
           idx += 1;
           window.section_layers.push("section_" + idx);
