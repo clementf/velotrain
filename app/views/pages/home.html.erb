@@ -1,24 +1,30 @@
 <div class="w-screen h-screen">
   <div class="absolute z-20 px-8 py-4 rounded-lg shadow-lg bg-white/80 backdrop-blur-sm top-4 left-4">
-    <%= form_with method: :get, url: "/", data: { turbo_frame: 'trip-results', turbo_action: "advance" }  do |form| %>
+    <%= form_with method: :get, url: "/", data: { turbo_frame: 'trip-results', turbo_action: "advance", controller: "search-form" }  do |form| %>
       <h1 class="text-lg font-bold text-gray-600">Itinéraire VéloTrain</h1>
-      <div class="my-2 mt-4">
-        <%= form.combobox :from_stop_id, search_api_train_stations_path(q: @from&.name), value: @from&.id, input: { placeholder: "Gare de départ", required: true, value: @from&.name}, class: "form-input" %>
+      <div class="flex items-center gap-x-2">
+        <div>
+          <div class="my-2 mt-4">
+            <%= form.combobox :from_stop_id, search_api_train_stations_path(q: @from&.name), value: @from&.id, input: { placeholder: "Gare de départ", required: true, value: @from&.name}, class: "form-input" %>
+          </div>
+          <div class="my-2">
+          <%= form.combobox :to_stop_id, search_api_train_stations_path(q: @to&.name), value: @to&.id, input: { placeholder: "Gare d'arrivée", required: true, value: @to&.name }, class: "form-input" %>
+          </div>
       </div>
-      <div class="my-2">
-        <%= form.combobox :to_stop_id, search_api_train_stations_path(q: @to&.name), value: @to&.id, input: { placeholder: "Gare d'arrivée", required: true, value: @to&.name }, class: "form-input" %>
+      <button data-action="click->search-form#swap">
+        <%= heroicon "arrows-up-down", class: "w-8 h-8 text-gray-500 mx-auto rounded-full border border-gray-300 shadow p-2" %>
+      </button>
       </div>
 
-      <div class="flex my-2 gap-x-2">
-        <%= form.select :hour, (0..23).to_a.map { |h| [h, h] }, { include_blank: "Heure", selected: params[:hour] || Time.now.hour }, class: "form-select bg-transparent" %>
-        <%= form.select :minute, (0..59).step(15).to_a.map { |m| [m, m] }, { include_blank: "Minute", selected: 0 }, class: "form-select bg-transparent" %>
+      <div class="flex pr-10 my-2 gap-x-2">
+        <%= form.select :hour, (4..22).to_a.map { |h| ["#{h}h", h] }, { include_blank: "Heure", selected: params[:hour] || Time.now.hour }, class: "form-select bg-transparent" %>
       </div>
 
       <div>
         <%= form.submit "Rechercher", class: "btn-primary w-full mt-4", data: { turbo_submits_with: "..." } %>
       </div>
       <turbo-frame id="trip-results">
-        <div class="my-4 max-h-[calc(100vh-24rem)] overflow-y-auto" data-controller="trip-results" data-stop-ids="<%= @stop_ids %>">
+        <div class="my-4 max-h-[calc(100vh-24rem)] overflow-y-auto" data-controller="trip-results">
 
           <% if @results.empty? %>
             <div class="flex items-center justify-center h-32 text-gray-500">
@@ -26,61 +32,64 @@
             </div>
           <% end %>
           <% @results.each do |result| %>
-            <div class="px-2 flex w-fit mb-2 py-px font-medium text-center text-[11px] text-white bg-emerald-800 rounded-full">
-              <span class="flex items-center mr-2">
-                <%= heroicon "clock", class: "w-3 h-3 mr-1", type: :outline %>
-                <%= Time.at(result[:duration]).utc.strftime("%Hh%M") %>
-              </span>
-              <span><%= pluralize(result[:transfers], "changement") %></span>
-            </div>
-            <% result[:sections].each_with_index do |section, idx| %>
-              <div class="flex items-center">
-                <span class="w-8 mr-2 <%= idx == 0 ? 'font-bold text-sm text-gray-700' : 'text-xs text-gray-500'  %>">
-                  <%= display_time section[:departure_time] %>
+            <div class="trip">
+              <div class="px-2 flex w-fit mb-2 py-px font-medium text-center text-[11px] text-white bg-emerald-800 rounded-full">
+                <span class="flex items-center mr-2">
+                  <%= heroicon "clock", class: "w-3 h-3 mr-1", type: :outline %>
+                  <%= Time.at(result[:duration]).utc.strftime("%Hh%M") %>
                 </span>
-                <span class="block w-3 h-3 mx-[5px] bg-white border-2 border-gray-800 rounded-full"></span>
-
-                <span class="ml-2 text-gray-700 <%= idx == 0 || idx == result[:sections].size ? 'font-bold' : 'text-sm font-medium -mt-4' %>">
-                  <%= section[:from] %>
-                </span>
+                <span><%= pluralize(result[:transfers], "changement") %></span>
               </div>
+              <% result[:sections].each_with_index do |section, idx| %>
+                <div class="flex items-center section" data-geo-json="<%= section[:geojson].to_json %>">
+                  <span class="w-8 mr-2 <%= idx == 0 ? 'font-bold text-sm text-gray-700' : 'text-xs text-gray-500'  %>">
+                    <%= display_time section[:departure_time] %>
+                  </span>
+                  <span class="block w-3 h-3 mx-[5px] bg-white border-2 border-gray-800 rounded-full"></span>
 
-              <div class="py-6 ml-[49px] -my-4 border-l-4 border-emerald-600/80" data-controller="trip-segment">
-
-                <div class="px-2 inline-block ml-4 py-px font-medium text-center text-[11px] text-white bg-emerald-800 rounded-full">
-                  <%= section[:commercial_mode] %>
+                  <span class="ml-2 text-gray-700 <%= idx == 0 || idx == result[:sections].size ? 'font-bold' : 'text-sm font-medium -mt-4' %>">
+                    <%= section[:from] %>
+                  </span>
                 </div>
 
-                <% if section[:stops].count > 2 %>
-                  <div>
-                    <span class="py-1 ml-4 text-xs text-gray-500 cursor-pointer front-medium hover:underline" data-action="click->trip-segment#toggle">
-                      <%= pluralize(section[:stops].count - 2, "arrêt") %>
-                    </span>
-                    <div class="hidden ml-6 text-xs font-medium text-gray-600 stops">
-                      <% section[:stops].slice(0..-2).each_with_index do |stop, index| %>
-                        <% if index > 0 %>
-                          <div class="py-1 text-xs text-gray-500">
-                            <%= stop[:name] %> - <%= display_time(stop[:departure_time]) %>
-                          </div>
-                        <% end %>
-                      <% end %>
-                    </div>
+                <div class="py-6 ml-[49px] -my-4 border-l-4 border-emerald-600/80" data-controller="trip-segment">
+
+                  <div class="px-2 inline-block ml-4 py-px font-medium text-center text-[11px] text-white bg-emerald-800 rounded-full">
+                    <%= section[:commercial_mode] %>
                   </div>
-                <% end %>
-              </div>
-              <div class="flex items-center">
-                <span class="w-8 mr-2 <%= idx == result[:sections].size - 1 ? 'font-bold text-sm text-gray-700' : 'text-xs text-gray-500'  %>">
-                  <%= display_time section[:arrival_time] %>
-                </span>
-                <span class="block w-3 h-3 mx-[5px] bg-white border-2 border-gray-800 rounded-full"></span>
-                <% if idx == result[:sections].size - 1 %>
-                  <span class="ml-2 font-bold text-gray-700">
-                    <%= section[:to] %>
+
+                  <% if section[:stops].count > 2 %>
+                    <div>
+                      <span class="py-1 ml-4 text-xs text-gray-500 cursor-pointer front-medium hover:underline" data-action="click->trip-segment#toggle">
+                        <%= pluralize(section[:stops].count - 2, "arrêt") %>
+                      </span>
+                      <div class="hidden ml-6 text-xs font-medium text-gray-600 stops">
+                        <% section[:stops].slice(0..-2).each_with_index do |stop, index| %>
+                          <% if index > 0 %>
+                            <div class="py-1 text-xs text-gray-500">
+                              <%= stop[:name] %> - <%= display_time(stop[:departure_time]) %>
+                            </div>
+                          <% end %>
+                        <% end %>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
+                <div class="flex items-center">
+                  <span class="w-8 mr-2 <%= idx == result[:sections].size - 1 ? 'font-bold text-sm text-gray-700' : 'text-xs text-gray-500'  %>">
+                    <%= display_time section[:arrival_time] %>
                   </span>
-                <% end %>
-              </div>
-            <% end %>
-            <hr class="h-px mx-auto w-[80%] my-4 bg-gray-200" />
+                  <span class="block w-3 h-3 mx-[5px] bg-white border-2 border-gray-800 rounded-full"></span>
+                  <% if idx == result[:sections].size - 1 %>
+                    <span class="ml-2 font-bold text-gray-700">
+                      <%= section[:to] %>
+                    </span>
+                  <% end %>
+                </div>
+              <% end %>
+              <hr class="h-px mx-auto w-[80%] my-4 bg-gray-200" />
+
+            </div>
 
           <% end %>
         </div>

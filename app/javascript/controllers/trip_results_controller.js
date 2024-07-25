@@ -3,45 +3,68 @@ import maplibregl from "maplibre-gl";
 
 export default class extends Controller {
   connect() {
-    if (window.trip_layers === undefined) {
-      window.trip_layers = [];
+    if (window.section_layers === undefined) {
+      window.section_layers = [];
     }
 
-    let ids = this.element.dataset.stopIds;
+    if(window.map.loaded()) {
+      this.setupObserver();
+    }
+    else {
+      // Wait for the map to load. Can't use load event b/c it's only fired once
+      // Similar to issue described here: https://github.com/mapbox/mapbox-gl-js/issues/6707
+      window.setTimeout(() => {
+        if(window.map.loaded()) {
+          this.setupObserver();
+        }
+      }, 200);
+    }
 
-    window.trip_layers.forEach((layer) => {
-      window.map.removeLayer(layer);
-      window.map.removeSource(layer);
+    // Still need to check if the map is loaded when the load event is fired
+    window.map.on('load', () => {
+      console.log('Map loaded');
+      this.setupObserver();
+    });
+  }
+
+  disconnect() {
+    this.removeLayers();
+  }
+
+  setupObserver() {
+    let observer = new IntersectionObserver(this.callback.bind(this), {
+      root: null, // Use the viewport as the container
+      rootMargin: '0px', // No margin around the root
+      threshold: 0.1 // Trigger when at least 10% of the element is visible
     });
 
-    window.trip_layers = [];
+    let targets = document.querySelectorAll('.trip');
+    targets.forEach(target => {
+      observer.observe(target);
+    });
+  }
 
-    if (ids.length === 0) {
-      let bounds = [
-        [16, 51.5],
-        [-9, 42.37],
-      ]
-      window.map.fitBounds(bounds, {
-        duration: 400,
-      });
-      return;
-    }
-
-    fetch(`/api/trips/id?stop_ids=${ids}`)
-      .then((response) => response.json())
-      .then((data) => {
+  callback(entries, observer) {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
         let idx = 0;
-        data.path.forEach((trip) => {
+
+        this.removeLayers();
+        window.section_layers = [];
+
+        entry.target.querySelectorAll('.section').forEach((section) => {
           idx += 1;
-          window.trip_layers.push("trip_" + idx);
-          window.map.addSource("trip_" + idx, {
+          window.section_layers.push("section_" + idx);
+
+          window.map.addSource("section_" + idx, {
             type: "geojson",
-            data: trip,
+            data: JSON.parse(section.dataset.geoJson),
           });
+
           window.map.addLayer({
-            id: "trip_" + idx,
+            id: "section_" + idx,
             type: "line",
-            source: "trip_" + idx,
+            source: "section_" + idx,
             layout: {
               "line-join": "round",
               "line-cap": "round",
@@ -53,13 +76,18 @@ export default class extends Controller {
             },
           });
         });
+      }
+    });
+  }
 
-        // Fit map to trip
-        let bounds = data.bounds;
-        window.map.fitBounds(bounds, {
-          padding: { top: 50, bottom: 50, left: 450, right: 200 },
-          duration: 400,
-        });
-      });
+  removeLayers() {
+    window.section_layers.forEach((layer) => {
+      if(window.map.getLayer(layer)) {
+        window.map.removeLayer(layer);
+      }
+      if(window.map.getSource(layer)) {
+        window.map.removeSource(layer);
+      }
+    });
   }
 }
