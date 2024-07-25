@@ -10,7 +10,7 @@ module Routing
       set_from_and_to(from, to)
 
       journeys = standard_journeys = format_response(make_request)
-      if standard_journeys.none? { |journey| journey[:transfers] == 0 }
+      if standard_journeys.none? { |journey| journey[:transfers] == 0 } && standard_journeys.none? { |journey| journey[:duration] < 3.hours }
         journeys += journeys_by_paris.flatten
       end
 
