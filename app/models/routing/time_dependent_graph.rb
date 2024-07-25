@@ -35,7 +35,7 @@ module Routing
     end
 
     def stations_in_paris
-      @stations_in_paris ||= Gtfs::Stop.train_stations.where("name LIKE ?", "%Paris%").pluck(:id)
+      @stations_in_paris ||= Gtfs::Stop.within_paris.pluck(:id)
     end
   end
 end

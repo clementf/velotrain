@@ -1,6 +1,17 @@
 require "csv"
 
 class Gtfs::Stop < ApplicationRecord
+  STOP_CODES_WITHIN_PARIS = %w[
+    StopArea:OCE87113001
+    StopArea:OCE87271007
+    StopArea:OCE87384008
+    StopArea:OCE87391003
+    StopArea:OCE87391102
+    StopArea:OCE87547000
+    StopArea:OCE87686006
+    StopArea:OCE87686667
+  ]
+
   belongs_to :parent_stop, class_name: "Gtfs::Stop", foreign_key: "parent_stop_id", optional: true
   has_many :stop_times, class_name: "Gtfs::StopTime", foreign_key: "gtfs_stop_id"
 
@@ -9,6 +20,7 @@ class Gtfs::Stop < ApplicationRecord
 
   scope :train_stations, -> { where("code LIKE '%OCETrain%' OR code LIKE '%OCETramTrain%'") }
   scope :bus_stops, -> { where("code LIKE '%OCECar%'") }
+  scope :within_paris, -> { where(code: STOP_CODES_WITHIN_PARIS) }
 
   def self.train_station_by_name(name)
     train_stations.find_by("lower(name) = ?", name.downcase)
