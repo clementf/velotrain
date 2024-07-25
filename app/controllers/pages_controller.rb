@@ -17,6 +17,12 @@ class PagesController < ApplicationController
       nil
     end
 
+    if parsed_hour_from_params.nil?
+      @results = []
+      render "pages/home"
+      return
+    end
+
     saved_search = SavedSearch.find_or_initialize_by(from_stop: @from, to_stop: @to, datetime: parsed_hour_from_params)
     if saved_search.persisted?
       @results = saved_search.results.map { |result| result.with_indifferent_access }
