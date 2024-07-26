@@ -1,5 +1,5 @@
 <div class="w-screen h-screen">
-  <div class="absolute z-20 px-8 py-4 rounded-lg shadow-lg bg-white/80 backdrop-blur-sm top-4 left-4" id="search-container">
+  <div class="absolute z-20 w-full px-8 py-4 shadow-lg md:rounded-lg bg-white/80 md:w-auto backdrop-blur-sm md:top-4 md:left-4" id="search-container">
       <h1 class="text-lg font-bold text-gray-600">Itinéraire VéloTrain</h1>
       <%= form_with method: :get, url: "/", data: { turbo_frame: 'trip-results', turbo_action: "advance", controller: "search-form" }  do |form| %>
         <div class="flex items-center gap-x-2">
