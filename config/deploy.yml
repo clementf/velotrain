@@ -58,6 +58,7 @@ env:
     - POSTGRES_PASSWORD
     - DATABASE_URL
     - SECRET_KEY_BASE
+    - RAILS_MASTER_KEY
 
 accessories:
   pg:
