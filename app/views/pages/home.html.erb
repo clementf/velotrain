@@ -1,5 +1,19 @@
+<script>
+  const toggleResults = () => {
+    const searchContainer = document.getElementById('search-container')
+    searchContainer.classList.toggle('translate-y-[calc(100vh_-_280px)]')
+    searchContainer.querySelector('.up').classList.toggle('hidden')
+    searchContainer.querySelector('.down').classList.toggle('hidden')
+  }
+</script>
 <div class="w-screen h-screen">
-  <div class="absolute z-20 w-full px-8 py-4 shadow-lg md:rounded-lg bg-white/80 md:w-auto backdrop-blur-sm md:top-4 md:left-4" id="search-container">
+  <div class="absolute z-20 w-full px-8 pb-4 pt-2 md:pt-4 shadow-lg transition-transform md:rounded-lg bg-white/80 md:translate-y-0 translate-y-[calc(100vh_-_280px)] md:w-auto backdrop-blur-sm md:top-4 md:left-4" id="search-container">
+    <button class="w-full md:hidden up" onclick="toggleResults()">
+      <%= heroicon "chevron-up", class: "w-6 h-6 text-gray-500 mx-auto" %>
+    </button>
+    <button class="w-full hidden down" onclick="toggleResults()">
+      <%= heroicon "chevron-down", class: "w-6 h-6 text-gray-500 mx-auto" %>
+    </button>
       <h1 class="text-lg font-bold text-gray-600">Itinéraire VéloTrain</h1>
       <%= form_with method: :get, url: "/", data: { turbo_frame: 'trip-results', turbo_action: "advance", controller: "search-form" }  do |form| %>
         <div class="flex items-center gap-x-2">
@@ -17,14 +31,14 @@
       </div>
 
       <div class="flex pr-10 gap-x-2">
-        <%= form.select :hour, (4..22).step(4).to_a.map { |h| ["#{h}h", h] }, { include_blank: "Heure de départ", selected: params[:hour] }, class: "form-select bg-transparent h-10", input: { required: true } %>
+        <%= form.select :hour, (4..22).step(4).to_a.map { |h| ["#{h}h", h] }, { include_blank: "Heure de départ", selected: params[:hour] }, class: "form-select max-w-[260px] bg-transparent h-10", input: { required: true } %>
       </div>
 
       <div class="pr-10">
-        <%= form.submit "Rechercher", class: "btn-primary w-full mt-4", data: { turbo_submits_with: "..." } %>
+        <%= form.submit "Rechercher", class: "btn-primary w-full mt-4 max-w-[260px]", data: { turbo_submits_with: "..." } %>
       </div>
       <turbo-frame id="trip-results">
-        <div class="my-4 max-h-[calc(100vh-24rem)] overflow-y-auto" data-controller="trip-results">
+        <div class="my-4 max-h-[calc(100vh-22rem)] overflow-y-auto" data-controller="trip-results">
 
           <% if @results.empty? && @from.present? && @to.present? %>
             <div class="flex items-center justify-center h-32 text-gray-500">
