@@ -17,10 +17,9 @@ class PagesController < ApplicationController
       nil
     end
 
+    # default to 8:00 if no hour is provided
     if parsed_hour_from_params.nil?
-      @results = []
-      render "pages/home"
-      return
+      parsed_hour_from_params = ActiveSupport::TimeZone["Europe/Paris"].parse("08:00")
     end
 
     saved_search = SavedSearch.find_or_initialize_by(from_stop: @from, to_stop: @to, datetime: parsed_hour_from_params)

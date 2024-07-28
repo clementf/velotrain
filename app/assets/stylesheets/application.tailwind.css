@@ -17,5 +17,9 @@
 }
 
 .hw-combobox__main__wrapper {
-  --hw-combobox-width: 260px;
+  --hw-combobox-width: 100%;
+}
+
+.hw-combobox {
+  @apply w-full;
 }

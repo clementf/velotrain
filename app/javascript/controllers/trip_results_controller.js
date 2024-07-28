@@ -39,7 +39,20 @@ export default class extends Controller {
       target.addEventListener('mouseenter', (event) => {
         this.showSection(target);
       })
+
+      target.addEventListener('click', (event) => {
+        if (document.body.clientWidth < 768) {
+          this.toggleResults();
+        }
+      });
     });
+  }
+
+  toggleResults() {
+    const searchContainer = document.getElementById('search-container')
+    searchContainer.classList.toggle('translate-y-[calc(100dvh_-_280px)]')
+    searchContainer.querySelector('.up').classList.toggle('hidden')
+    searchContainer.querySelector('.down').classList.toggle('hidden')
   }
 
   showSection(target) {
@@ -56,9 +69,12 @@ export default class extends Controller {
       });
     });
 
+    let paddingLeft = document.body.clientWidth > 768 ? document.querySelector('#search-container').offsetWidth + 50 : 50;
+    let paddingBottom = document.body.clientWidth < 768 ? 330 : 50;
+
     window.map.fitBounds(bounds, {
       duration: 200,
-      padding: { top: 50, bottom: 50, left: document.querySelector('#search-container').offsetWidth + 50, right: 50 }
+      padding: { top: 50, bottom: paddingBottom, left: paddingLeft, right: 50 }
     });
 
     target.querySelectorAll('.section').forEach((section) => {
