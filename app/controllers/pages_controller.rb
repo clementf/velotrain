@@ -34,4 +34,7 @@ class PagesController < ApplicationController
     saved_search.searches_count += 1
     saved_search.save
   end
+
+  def about
+  end
 end
