@@ -50,7 +50,6 @@ export default class extends Controller {
 
   toggleResults() {
     const searchContainer = document.getElementById('search-container')
-    searchContainer.classList.toggle('translate-y-[calc(100dvh_-_280px)]')
     searchContainer.querySelector('.up').classList.toggle('hidden')
     searchContainer.querySelector('.down').classList.toggle('hidden')
   }
@@ -70,7 +69,7 @@ export default class extends Controller {
     });
 
     let paddingLeft = document.body.clientWidth > 768 ? document.querySelector('#search-container').offsetWidth + 50 : 50;
-    let paddingBottom = document.body.clientWidth < 768 ? 330 : 50;
+    let paddingBottom = document.body.clientWidth < 768 ? 350 : 50;
 
     window.map.fitBounds(bounds, {
       duration: 200,

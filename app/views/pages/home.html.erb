@@ -1,20 +1,21 @@
 <script>
   const toggleResults = () => {
     const searchContainer = document.getElementById('search-container')
-    searchContainer.classList.toggle('translate-y-[calc(100dvh_-_280px)]')
+    let offset = window.innerHeight - 240
+    searchContainer.style.transform = searchContainer.style.transform === 'translateY(0px)' ? `translateY(${offset}px)` : 'translateY(0px)'
     searchContainer.querySelector('.up').classList.toggle('hidden')
     searchContainer.querySelector('.down').classList.toggle('hidden')
   }
 </script>
-<div class="w-screen h-screen">
-  <div class="absolute md:max-w-96 z-20 w-full px-8 pb-4 pt-2 md:pt-4 shadow-lg transition-transform md:rounded-lg bg-white/80 md:translate-y-0 translate-y-[calc(100dvh_-_280px)] md:w-auto backdrop-blur-sm md:top-4 md:left-4" id="search-container">
-    <button class="w-full md:hidden up" onclick="toggleResults()">
-      <%= heroicon "chevron-up", class: "w-6 h-6 text-gray-500 mx-auto" %>
+<div class="">
+  <div class="absolute md:max-w-96 z-20 h-[100dvh] md:h-auto w-full px-8 pb-4 pt-2 md:pt-4 shadow-lg transition-transform md:rounded-lg bg-white/80 md:translate-y-0 translate-y-[calc(100dvh_-_240px)] md:w-auto backdrop-blur-sm md:top-4 md:left-4" id="search-container">
+    <button class="absolute p-2 mx-auto border border-gray-300 rounded-full shadow md:hidden up left-1/2 -translate-x-1/2 -top-5 full bg-gray-50" onclick="toggleResults()">
+      <%= heroicon "chevron-up", class: "w-4 h-4 text-gray-500 mx-auto" %>
     </button>
-    <button class="hidden w-full down" onclick="toggleResults()">
-      <%= heroicon "chevron-down", class: "w-6 h-6 text-gray-500 mx-auto" %>
+    <button class="absolute hidden p-2 mx-auto border border-gray-300 rounded-full shadow md:hidden down left-1/2 -translate-x-1/2 -top-2 full bg-gray-50" onclick="toggleResults()">
+      <%= heroicon "chevron-down", class: "w-4 h-4 text-gray-500 mx-auto" %>
     </button>
-      <h1 class="text-lg font-bold text-gray-600">Itinéraire VéloTrain</h1>
+      <h1 class="mt-1 text-lg font-bold text-gray-600">Itinéraire VéloTrain</h1>
       <%= form_with method: :get, url: "/", data: { turbo_frame: 'trip-results', turbo_action: "advance", controller: "search-form" }  do |form| %>
         <div class="flex items-center gap-x-2">
           <div class="relative w-full">
@@ -40,7 +41,7 @@
         </div>
       </div>
       <turbo-frame id="trip-results">
-        <div class="my-4 max-h-[calc(100vh-22rem)] overflow-y-auto" data-controller="trip-results">
+        <div class="my-2 max-h-[calc(100vh-22rem)] overflow-y-auto" data-controller="trip-results">
 
           <% if @results.empty? && @from.present? && @to.present? %>
             <div class="flex items-center justify-center h-32 text-gray-500">
