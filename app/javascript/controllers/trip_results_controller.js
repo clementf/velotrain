@@ -39,19 +39,7 @@ export default class extends Controller {
       target.addEventListener('mouseenter', (event) => {
         this.showSection(target);
       })
-
-      target.addEventListener('click', (event) => {
-        if (document.body.clientWidth < 768) {
-          this.toggleResults();
-        }
-      });
     });
-  }
-
-  toggleResults() {
-    const searchContainer = document.getElementById('search-container')
-    searchContainer.querySelector('.up').classList.toggle('hidden')
-    searchContainer.querySelector('.down').classList.toggle('hidden')
   }
 
   showSection(target) {
