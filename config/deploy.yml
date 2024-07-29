@@ -13,7 +13,7 @@ servers:
       "add-host": host.docker.internal:host-gateway
     labels:
       traefik.http.routers.kasai.entrypoints: websecure
-      traefik.http.routers.kasai.rule: Host(`next.velotrain.fr`)
+      traefik.http.routers.kasai.rule: Host(`velotrain.fr`)
       traefik.http.routers.kasai.tls.certresolver: letsencrypt
 
 traefik:
