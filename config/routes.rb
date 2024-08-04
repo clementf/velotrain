@@ -9,6 +9,8 @@ Rails.application.routes.draw do
   get "/about" => "pages#about"
 
   namespace :api do
+    resources :paths, only: [:index, :show]
+
     resources :train_stations, only: [:index, :show] do
       collection do
         get :search

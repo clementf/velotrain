@@ -232,6 +232,7 @@ export default class extends Controller {
 
       addTrainLines();
       addTrainStations();
+      addPaths();
     });
 
     const resetIsochrones = async () => {
@@ -239,6 +240,32 @@ export default class extends Controller {
       map.getSource("isochrones-1800").setData(await fetchIsochrone(1800));
       map.getSource("isochrones-900").setData(await fetchIsochrone(900));
     };
+
+    const addPaths = async () => {
+      const response = await fetch("api/paths");
+      const data = await response.json();
+
+      map.addSource("paths", {
+        type: "geojson",
+        data: data,
+      });
+
+      map.addLayer(
+        {
+          id: "paths",
+          type: "line",
+          source: "paths",
+          paint: {
+            "line-color": "#274c77",
+            "line-width": 2,
+            "line-opacity": 0.8,
+          },
+        },
+        firstSymbolId,
+      );
+    };
+
+
 
     map.on("zoomend", async () => {
       if (Math.round(map.getZoom()) > 9 && zoomLevel < 9) {
