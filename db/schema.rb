@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_08_125158) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_02_195056) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "postgis"
@@ -56,6 +56,21 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_08_125158) do
     t.index ["user_id"], name: "index_ahoy_visits_on_user_id"
     t.index ["visit_token"], name: "index_ahoy_visits_on_visit_token", unique: true
     t.index ["visitor_token", "started_at"], name: "index_ahoy_visits_on_visitor_token_and_started_at"
+  end
+
+  create_table "gpx_segments", force: :cascade do |t|
+    t.bigint "gpx_track_id", null: false
+    t.string "status"
+    t.geography "geom", limit: {:srid=>4326, :type=>"line_string", :has_z=>true, :geographic=>true}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["gpx_track_id"], name: "index_gpx_segments_on_gpx_track_id"
+  end
+
+  create_table "gpx_tracks", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "gtfs_routes", force: :cascade do |t|
@@ -156,6 +171,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_08_125158) do
     t.index ["lonlat"], name: "index_train_stations_on_lonlat", using: :gist
   end
 
+  add_foreign_key "gpx_segments", "gpx_tracks"
   add_foreign_key "gtfs_stop_times", "gtfs_stops"
   add_foreign_key "gtfs_stop_times", "gtfs_trips"
   add_foreign_key "gtfs_stops", "gtfs_stops", column: "parent_stop_id"
