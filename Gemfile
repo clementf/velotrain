@@ -26,6 +26,8 @@ gem "importmap-rails"
 
 gem "ahoy_matey"
 
+gem "clearance"
+
 # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
 gem "turbo-rails"
 gem "stimulus-rails"
