@@ -1,15 +1,15 @@
 class GpxImport
-  def initialize(file, track_name:)
+  def initialize(file, track)
     @file = file
-    @track_name = track_name
+    @track = track
   end
 
   def import_track_from_file
     ActiveRecord::Base.transaction do
-      track = Gpx::Track.create!(name: @track_name)
+      @track.segments.destroy_all
 
       doc.css("trk").each do |trk|
-        track.segments.create!(
+        @track.segments.create!(
           status: trk.css("desc").text,
           geom: "LINESTRING(#{trk.css("trkseg trkpt").map { |trkpt| "#{trkpt["lon"]} #{trkpt["lat"]} #{trkpt.css("ele").text}" }.join(", ")})"
         )

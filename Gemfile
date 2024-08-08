@@ -8,6 +8,8 @@ gem "rails-i18n"
 
 gem "actionpack-action_caching"
 gem "solid_cache"
+gem "solid_queue"
+gem "mission_control-jobs"
 
 # The modern asset pipeline for Rails [https://github.com/rails/propshaft]
 gem "propshaft"

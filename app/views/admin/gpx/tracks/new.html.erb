@@ -1,0 +1,13 @@
+<div class="px-4 sm:py-6">
+  <div class="py-5 bg-white border-b border-gray-200">
+    <div class="flex flex-wrap items-center justify-between -mt-2 -ml-4 sm:flex-nowrap">
+      <div class="mt-2 ml-4">
+        <h3 class="text-base font-semibold text-gray-900 leading-6">Creating track</h3>
+      </div>
+      <div class="flex-shrink-0 mt-2 ml-4">
+    <%= link_to "All tracks", admin_gpx_tracks_path, class: "relative inline-flex items-center rounded-md bg-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600" %>
+      </div>
+    </div>
+  </div>
+  <%= render "form", gpx_track: @gpx_track %>
+</div>

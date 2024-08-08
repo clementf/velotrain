@@ -25,13 +25,16 @@ module Api
         Rails.logger.info("Cache miss for gpx_segments_#{cache_key}")
 
         Gpx::Segment
+          .joins(:track)
           .includes(:track)
-          .select("id, gpx_track_id, status, ST_Simplify(ST_Intersection(geom::geometry, ST_GeomFromText('#{FRANCE}', 4326)), #{simplification_factor}) AS geom")
+          .select("gpx_segments.id, gpx_track_id, status, ST_Simplify(ST_Intersection(geom::geometry, ST_GeomFromText('#{FRANCE}', 4326)), #{simplification_factor}) AS geom")
+          .where("gpx_tracks.visible = true")
       end
     end
 
     def cache_key
-      "paths_for_zoom_#{params[:zoom]}}"
+      all_visible_tracks = Gpx::Track.where(visible: true).pluck(:id)
+      "paths_for_zoom_#{params[:zoom]}}_tracks_#{all_visible_tracks.join(",")}"
     end
 
     def simplification_factor

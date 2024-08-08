@@ -1,0 +1,12 @@
+<div class="flex w-full mx-auto md:w-2/3">
+  <div class="mx-auto">
+
+    <%= render "track", track: @gpx_track %>
+
+    <%= link_to "Edit this track", edit_admin_gpx_track_path(@gpx_track), class: "mt-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
+    <%= link_to "Back to tracks", admin_gpx_tracks_path, class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
+    <div class="inline-block ml-2">
+      <%= button_to "Destroy this track", admin_gpx_track_path(@gpx_track), method: :delete, class: "mt-2 rounded-lg py-3 px-5 bg-gray-100 font-medium" %>
+    </div>
+  </div>
+</div>

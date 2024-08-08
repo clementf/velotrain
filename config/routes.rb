@@ -22,6 +22,16 @@ Rails.application.routes.draw do
     resources :isochrones, only: [:index]
   end
 
+  namespace :admin do
+    constraints Clearance::Constraints::SignedIn.new { |user| user.dev? } do
+      mount MissionControl::Jobs::Engine, at: "/jobs"
+
+      namespace :gpx do
+        resources :tracks
+      end
+    end
+  end
+
   # Defines the root path route ("/")
   root "pages#home"
 end
