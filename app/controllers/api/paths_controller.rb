@@ -42,7 +42,7 @@ module Api
 
       case zoom_level
       when 0..7
-        0.1
+        0.05
       when 7..10
         0.01
       when 10..12
