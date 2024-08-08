@@ -84,7 +84,7 @@ export default class extends Controller {
         paint: {
           "line-color": "#065f46",
           "line-opacity": 0.8,
-          "line-width": 5,
+          "line-width": 4,
         },
       });
     });

@@ -74,8 +74,8 @@ export default class extends Controller {
           source: "train_lines",
           paint: {
             "line-color": "#666",
-            "line-width": 1.2,
-            "line-opacity": 0.8,
+            "line-width": 1,
+            "line-opacity": 0.6,
           },
         },
         firstSymbolId,
@@ -261,7 +261,7 @@ export default class extends Controller {
           paint: {
             "line-color": "#274c77",
             "line-width": 2,
-            "line-opacity": 0.8,
+            "line-opacity": 0.9,
           },
         },
         firstSymbolId,
