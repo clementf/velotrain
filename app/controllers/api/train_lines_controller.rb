@@ -3,7 +3,7 @@ module Api
     caches_action :index
 
     def index
-      @train_lines = TrainLine.all
+      @train_lines = simplified_train_lines
 
       render json: {
         type: "FeatureCollection",
@@ -14,6 +14,12 @@ module Api
           }
         end
       }
+    end
+
+    private
+
+    def simplified_train_lines
+      TrainLine.all.select("ST_Simplify(geom, 0.001) as geom")
     end
   end
 end
