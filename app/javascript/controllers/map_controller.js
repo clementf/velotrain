@@ -241,9 +241,12 @@ export default class extends Controller {
       map.getSource("isochrones-900").setData(await fetchIsochrone(900));
     };
 
+    const resetPaths = async () => {
+      map.getSource("paths").setData(await fetchPaths());
+    }
+
     const addPaths = async () => {
-      const response = await fetch("api/paths");
-      const data = await response.json();
+      let data = await fetchPaths();
 
       map.addSource("paths", {
         type: "geojson",
@@ -265,18 +268,31 @@ export default class extends Controller {
       );
     };
 
+    const fetchPaths = async () => {
+      const zoom = Math.round(map.getZoom());
+      const bounds = map.getBounds().toArray().flat().join(",");
+      const response = await fetch(`api/paths?zoom=${zoom}&bounds=${bounds}`);
+      return await response.json();
+    };
 
+    map.on("moveend", async () => {
+      resetPaths();
+    });
 
     map.on("zoomend", async () => {
       if (Math.round(map.getZoom()) > 9 && zoomLevel < 9) {
         resetIsochrones();
-        zoomLevel = map.getZoom();
       }
 
       if (Math.round(map.getZoom()) < 9 && zoomLevel > 9) {
         resetIsochrones();
-        zoomLevel = map.getZoom();
       }
+
+      if(Math.round(map.getZoom()) !== zoomLevel) {
+        resetPaths();
+      }
+
+      zoomLevel = map.getZoom();
     });
   }
 }
