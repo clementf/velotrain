@@ -8,10 +8,10 @@ module Api
         features: gpx_segments.map do |segment|
           {
             type: "Feature",
-            # properties: {
-            #   name: segment.track.name,
-            #   status: segment.status
-            # },
+            properties: {
+              name: segment.track.name,
+              status: segment.status
+            },
             geometry: JSON.parse(segment.geom_json)
           }
         end
@@ -24,12 +24,18 @@ module Api
       Rails.cache.fetch("gpx_segments_#{cache_key}") do
         Rails.logger.info("Cache miss for gpx_segments_#{cache_key}")
 
-        Gpx::Segment
+        segments = Gpx::Segment
           .includes(:track)
           .joins(:track)
           .select("gpx_segments.id, gpx_track_id, status, ST_AsGeoJSON(ST_Simplify(#{intersection_clause}, #{simplification_factor})) AS geom_json")
           .where("gpx_tracks.visible = true")
           .where(intersection_where_clause)
+
+        if zoom_level < 8
+          segments = segments.where("gpx_segments.distance > 100000")
+        end
+
+        segments
       end
     end
 
@@ -86,8 +92,6 @@ module Api
     end
 
     def simplification_factor
-      zoom_level = params[:zoom].to_i
-
       case zoom_level
       when 0..7
         5
@@ -98,6 +102,10 @@ module Api
       else
         0.0001
       end
+    end
+
+    def zoom_level
+      params[:zoom].to_i
     end
   end
 end

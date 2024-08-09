@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_09_130939) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_09_154831) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "postgis"
@@ -92,6 +92,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_09_130939) do
     t.geography "geom", limit: {:srid=>4326, :type=>"multi_line_string", :geographic=>true}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "distance"
     t.index ["gpx_track_id"], name: "index_gpx_segments_on_gpx_track_id"
   end
 
