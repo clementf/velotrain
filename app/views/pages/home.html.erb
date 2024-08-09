@@ -41,7 +41,7 @@
         </div>
       </div>
       <turbo-frame id="trip-results">
-        <div class="my-2 max-h-[calc(100vh-22rem)] overflow-y-auto" data-controller="trip-results">
+        <div class="my-2 max-h-[calc(100vh-24rem)] overflow-y-auto" data-controller="trip-results">
 
           <% if @results.empty? && @from.present? && @to.present? %>
             <div class="flex items-center justify-center h-32 text-gray-500">
@@ -123,7 +123,22 @@
 
       </turbo-frame>
     <% end %>
-      <div class="text-xs font-medium text-gray-500">
+    <section class="text-xs font-medium text-gray-500" data-controller="map-filters">
+      <div class="flex items-center justify-between mt-1">
+        <span class="flex flex-col flex-grow">
+          <span class="text-xs font-semibold text-gray-700">Afficher les voies vélo</span>
+        </span>
+
+        <button type="button" class="relative inline-flex items-center justify-center flex-shrink-0 w-10 h-5 rounded-full cursor-pointer group focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2" role="switch" aria-checked="false" data-action="click->map-filters#toggleTracks">
+          <span class="sr-only">Afficher les voies Vélo</span>
+          <span aria-hidden="true" class="absolute w-full h-full pointer-events-none rounded-md"></span>
+          <!-- Enabled: "bg-emerald-600", Not Enabled: "bg-gray-200" -->
+          <span aria-hidden="true" class="absolute h-4 mx-auto bg-gray-200 rounded-full pointer-events-none w-9 transition-colors duration-200 ease-in-out slider-bg"></span>
+          <!-- Enabled: "translate-x-5", Not Enabled: "translate-x-0" -->
+          <span aria-hidden="true" class="absolute left-0 inline-block w-5 h-5 bg-white border border-gray-200 rounded-full shadow pointer-events-none slider-fg translate-x-0 transform ring-0 transition-transform duration-200 ease-in-out"></span>
+        </button>
+      </div>
+      <div class="mt-2">
         <div class="flex mb-1 gap-x-1">
           <span class="bg-[#60d394]/80 rounded w-6 h-3"></span>
           <span class="bg-[#aaf683]/80 rounded w-6 h-3"></span>
@@ -131,6 +146,8 @@
         </div>
         <span>15 / 30 / 60 min de vélo depuis une gare</span>
       </div>
+
+    </section>
   </div>
   <div id="map" class="w-screen h-screen" data-controller="map">
 

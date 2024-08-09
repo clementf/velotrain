@@ -232,7 +232,6 @@ export default class extends Controller {
 
       addTrainLines();
       addTrainStations();
-      addPaths();
     });
 
     const resetIsochrones = async () => {
@@ -242,6 +241,10 @@ export default class extends Controller {
     };
 
     const resetPaths = async () => {
+      if (!map.getSource("paths")) {
+        return;
+      }
+
       map.getSource("paths").setData(await fetchPaths());
     }
 
@@ -275,6 +278,16 @@ export default class extends Controller {
       return await response.json();
     };
 
+    document.addEventListener("enabled-filter:tracks", async () => {
+      addPaths();
+    });
+
+    document.addEventListener("disabled-filter:tracks", async () => {
+      map.removeLayer("paths");
+      map.removeSource("paths");
+    });
+
+
     map.on("moveend", async () => {
       resetPaths();
     });
@@ -286,10 +299,6 @@ export default class extends Controller {
 
       if (Math.round(map.getZoom()) < 9 && zoomLevel > 9) {
         resetIsochrones();
-      }
-
-      if(Math.round(map.getZoom()) !== zoomLevel) {
-        resetPaths();
       }
 
       zoomLevel = map.getZoom();
