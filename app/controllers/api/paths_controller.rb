@@ -32,7 +32,7 @@ module Api
           .where(intersection_where_clause)
 
         if zoom_level < 8
-          segments = segments.where("gpx_segments.distance > 100000")
+          segments = segments.where("gpx_segments.distance > 120000")
         end
 
         segments
@@ -93,14 +93,16 @@ module Api
 
     def simplification_factor
       case zoom_level
-      when 0..7
-        5
-      when 7..9
+      when 0..6
+        0.05
+      when 6..8
         0.01
-      when 9..10
+      when 8..9
         0.001
-      else
+      when 9..10
         0.0001
+      else
+        0.000001
       end
     end
 

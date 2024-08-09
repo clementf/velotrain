@@ -11,6 +11,17 @@ class Gpx::Segment < ApplicationRecord
     distance / 1000
   end
 
+  def consolidate_multiline_string!
+    query = <<-SQL
+      SELECT ST_AsText(ST_LineMerge(geom::geometry)) AS geom
+      FROM gpx_segments
+      WHERE id = #{id};
+    SQL
+
+    geom = ActiveRecord::Base.connection.execute(query).first
+    update(geom: geom["geom"])
+  end
+
   private
 
   def calculate_distance
