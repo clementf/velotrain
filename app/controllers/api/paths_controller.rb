@@ -34,7 +34,7 @@ module Api
 
     def cache_key
       all_visible_tracks = Gpx::Track.where(visible: true).pluck(:id)
-      "paths_for_zoom_#{params[:zoom]}}_tracks_#{all_visible_tracks.join(",")}"
+      "paths_for_zoom_#{params[:zoom]}_tracks_#{all_visible_tracks.join(",")}"
     end
 
     def simplification_factor
@@ -42,7 +42,7 @@ module Api
 
       case zoom_level
       when 0..7
-        0.05
+        0.1
       when 7..10
         0.01
       when 10..12
