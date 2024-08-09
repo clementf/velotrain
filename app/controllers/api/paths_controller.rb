@@ -8,11 +8,11 @@ module Api
         features: gpx_segments.map do |segment|
           {
             type: "Feature",
-            properties: {
-              name: segment.track.name,
-              status: segment.status
-            },
-            geometry: RGeo::GeoJSON.encode(segment.geom)
+            # properties: {
+            #   name: segment.track.name,
+            #   status: segment.status
+            # },
+            geometry: JSON.parse(segment.geom_json)
           }
         end
       }
@@ -25,16 +25,64 @@ module Api
         Rails.logger.info("Cache miss for gpx_segments_#{cache_key}")
 
         Gpx::Segment
-          .joins(:track)
           .includes(:track)
-          .select("gpx_segments.id, gpx_track_id, status, ST_Simplify(ST_Intersection(geom::geometry, ST_GeomFromText('#{FRANCE}', 4326)), #{simplification_factor}) AS geom")
+          .joins(:track)
+          .select("gpx_segments.id, gpx_track_id, status, ST_AsGeoJSON(ST_Simplify(#{intersection_clause}, #{simplification_factor})) AS geom_json")
           .where("gpx_tracks.visible = true")
+          .where(intersection_where_clause)
       end
     end
 
     def cache_key
-      all_visible_tracks = Gpx::Track.where(visible: true).pluck(:id)
-      "paths_for_zoom_#{params[:zoom]}_tracks_#{all_visible_tracks.join(",")}"
+      "#{simplified_bounds_to_maximize_cache_hits.join("_")}_#{params[:zoom]}}"
+    end
+
+    def intersection_where_clause
+      if simplified_bounds_to_maximize_cache_hits.present?
+        "ST_Intersects(geom::geometry, ST_MakeEnvelope(#{simplified_bounds_to_maximize_cache_hits.join(", ")}, 4326))"
+      else
+        "ST_Intersects(geom::geometry, ST_GeomFromText('#{FRANCE}', 4326))"
+      end
+    end
+
+    def intersection_clause
+      if simplified_bounds_to_maximize_cache_hits.present?
+        "ST_Intersection(geom::geometry, ST_MakeEnvelope(#{simplified_bounds_to_maximize_cache_hits.join(", ")}, 4326))"
+      else
+        "ST_Intersection(geom::geometry, ST_GeomFromText('#{FRANCE}', 4326))"
+      end
+    end
+
+    def simplified_bounds_to_maximize_cache_hits
+      bounds = params[:bounds].split(",").map(&:to_f)
+
+      # Define the amount of padding in degrees (adjust based on your needs)
+      padding = 0.1 # For example, 0.001 degrees (about 111 meters at the equator)
+
+      # If bounds are provided, add padding before rounding
+      if bounds.any?
+        # bounds are assumed to be in the format [min_lat, min_lon, max_lat, max_lon]
+        min_lat, min_lon, max_lat, max_lon = bounds
+
+        # Add padding
+        min_lat -= padding
+        min_lon -= padding
+        max_lat += padding
+        max_lon += padding
+
+        # Round the bounds with padding to maximize cache hit rate
+        [
+          min_lat.round(4),
+          min_lon.round(4),
+          max_lat.round(4),
+          max_lon.round(4)
+        ]
+
+        # Return or use the rounded bounds as needed
+
+      else
+        []
+      end
     end
 
     def simplification_factor
@@ -42,10 +90,10 @@ module Api
 
       case zoom_level
       when 0..7
-        0.1
-      when 7..10
+        5
+      when 7..9
         0.01
-      when 10..12
+      when 9..10
         0.001
       else
         0.0001

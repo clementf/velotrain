@@ -4,15 +4,16 @@ class VelodataGeojsonImport
   end
 
   def import
-    @data = JSON.parse(File.read(@file))
+    @data = RGeo::GeoJSON.decode(File.read(@file))
 
-    @data["features"].each do |feature|
+    @data.each do |feature|
       track = Gpx::Track.create!(
-        name: feature["properties"]["nom_iti"].strip
+        name: feature.properties["nom_iti"]
       )
 
-      wkt_string = "LINESTRING (#{feature["geometry"]["coordinates"].flatten(1).map { |coord| coord.join(" ") }.join(", ")})"
-      track.segments.create!(geom: wkt_string)
+      track.segments.create!(
+        geom: feature.geometry
+      )
     end
   end
 end
