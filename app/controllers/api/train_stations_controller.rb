@@ -22,7 +22,7 @@ module Api
     end
 
     def search
-      @train_stations = Gtfs::Stop.train_stations.where("lower(name) LIKE ?", "%#{params[:q]&.downcase}%").limit(10)
+      @train_stations = Gtfs::Stop.train_stations.where("lower(name) LIKE ?", "%#{params[:q]&.downcase}%").limit(10).order(:name)
       render turbo_stream: helpers.async_combobox_options(@train_stations)
     end
 
