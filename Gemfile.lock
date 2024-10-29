@@ -121,6 +121,7 @@ GEM
     bootsnap (1.18.3)
       msgpack (~> 1.2)
     builder (3.3.0)
+    chartkick (5.0.5)
     clearance (2.7.2)
       actionmailer (>= 5.0)
       activemodel (>= 5.0)
@@ -152,6 +153,8 @@ GEM
       raabro (~> 1.4)
     globalid (1.2.1)
       activesupport (>= 6.1)
+    groupdate (6.5.0)
+      activesupport (>= 7)
     hotwire_combobox (0.3.1)
       rails (>= 7.0.7.2)
       stimulus-rails (>= 1.2)
@@ -325,7 +328,9 @@ DEPENDENCIES
   ahoy_matey
   aws-sdk-s3
   bootsnap
+  chartkick
   clearance
+  groupdate
   heroicon-rails!
   hotwire_combobox
   importmap-rails

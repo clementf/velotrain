@@ -8,3 +8,5 @@ pin_all_from "app/javascript/controllers", under: "controllers"
 pin "maplibre-gl" # @4.3.2
 pin "ahoy" # @1.0.1
 pin "os" # @2.0.1
+pin "chartkick", to: "chartkick.js"
+pin "Chart.bundle", to: "Chart.bundle.js"

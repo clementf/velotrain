@@ -29,6 +29,10 @@ Rails.application.routes.draw do
       namespace :gpx do
         resources :tracks
       end
+
+      resource :dashboard, only: [:show]
+
+      root to: "dashboard#show"
     end
   end
 

@@ -1,0 +1,39 @@
+<div class="px-4 py-8 mx-auto bg-gray-50 sm:px-6 lg:px-8">
+  <h1 class="mb-8 text-3xl font-semibold text-center text-gray-800">Dashboard</h1>
+
+    <div class="p-4 my-8 bg-white rounded-lg shadow">
+      <h2 class="mb-4 text-lg font-medium text-center text-gray-700">Visits Over Time</h2>
+      <div class="">
+        <%= line_chart Ahoy::Visit.group_by_day(:started_at).count, id: "visits-over-time-chart" %>
+      </div>
+      <h2 class="my-4 text-base font-medium text-center text-gray-700">Week by week</h2>
+      <div class="">
+        <%= line_chart Ahoy::Visit.group_by_week(:started_at).count, id: "searches-over-time-chart" %>
+      </div>
+    </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="p-4 bg-white rounded-lg shadow">
+      <h2 class="mb-4 text-lg font-medium text-center text-gray-700">Top 5 Most Searched Starting Train Stations</h2>
+      <div class="">
+        <%= pie_chart SavedSearch.all.group(:from_stop_id).count
+                          .sort_by { |_, v| -v }
+                          .first(5)
+                          .map { |k, v| [Gtfs::Stop.find(k).name, v] }
+                          .to_h, id: "top-starting-stations-chart" %>
+      </div>
+    </div>
+
+    <div class="p-4 bg-white rounded-lg shadow">
+      <h2 class="mb-4 text-lg font-medium text-center text-gray-700">Top 5 Most Searched Ending Train Stations</h2>
+      <div class="">
+        <%= pie_chart SavedSearch.all.group(:to_stop_id).count
+                          .sort_by { |_, v| -v }
+                          .first(5)
+                          .map { |k, v| [Gtfs::Stop.find(k).name, v] }
+                          .to_h, id: "top-ending-stations-chart" %>
+      </div>
+    </div>
+
+  </div>
+</div>

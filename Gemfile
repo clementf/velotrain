@@ -29,6 +29,8 @@ gem "puma", ">= 5.0"
 gem "importmap-rails"
 
 gem "ahoy_matey"
+gem "groupdate"
+gem "chartkick"
 
 gem "clearance"
 

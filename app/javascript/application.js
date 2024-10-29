@@ -2,6 +2,8 @@
 import "@hotwired/turbo-rails"
 import "controllers"
 import "ahoy"
+import "chartkick"
+import "Chart.bundle"
 
 ahoy.configure({cookies: false, trackVisits: true})
 
