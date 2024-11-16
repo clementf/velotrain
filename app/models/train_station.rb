@@ -8,4 +8,8 @@ class TrainStation < ApplicationRecord
   def lat
     lonlat.y
   end
+
+  def to_combobox_display
+    name.to_s
+  end
 end

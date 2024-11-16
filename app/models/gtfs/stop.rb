@@ -18,7 +18,7 @@ class Gtfs::Stop < ApplicationRecord
   has_many :saved_searches_from, class_name: "SavedSearch", foreign_key: "from_stop_id", dependent: :destroy
   has_many :saved_searches_to, class_name: "SavedSearch", foreign_key: "to_stop_id", dependent: :destroy
 
-  scope :train_stations, -> { where("code LIKE '%OCETrain%' OR code LIKE '%OCETramTrain%'") }
+  scope :train_stations, -> { where("gtfs_stops.code LIKE '%OCETrain%' OR gtfs_stops.code LIKE '%OCETramTrain%'") }
   scope :bus_stops, -> { where("code LIKE '%OCECar%'") }
   scope :within_paris, -> { where(code: STOP_CODES_WITHIN_PARIS) }
 
@@ -40,7 +40,7 @@ class Gtfs::Stop < ApplicationRecord
   end
 
   def to_combobox_display
-    "#{name}"
+    name.to_s
   end
 
   def self.import(filepath)
