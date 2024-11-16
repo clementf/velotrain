@@ -1,0 +1,158 @@
+<script>
+  const toggleResults = () => {
+    const searchContainer = document.getElementById('search-container')
+    let offset = window.innerHeight - 240
+    searchContainer.style.transform = searchContainer.style.transform === 'translateY(0px)' ? `translateY(${offset}px)` : 'translateY(0px)'
+    searchContainer.querySelector('.up').classList.toggle('hidden')
+    searchContainer.querySelector('.down').classList.toggle('hidden')
+  }
+</script>
+<div class="">
+  <div class="absolute md:max-w-96 z-20 h-[100dvh] md:h-auto w-full px-8 pb-4 pt-2 md:pt-4 shadow-lg transition-transform md:rounded-lg bg-white/80 md:translate-y-0 translate-y-[calc(100dvh_-_240px)] md:w-auto backdrop-blur-sm md:top-4 md:left-4" id="search-container">
+    <button class="absolute p-2 mx-auto border border-gray-300 rounded-full shadow md:hidden up left-1/2 -translate-x-1/2 -top-5 full bg-gray-50" onclick="toggleResults()">
+      <%= heroicon "chevron-up", class: "w-4 h-4 text-gray-500 mx-auto" %>
+    </button>
+    <button class="absolute hidden p-2 mx-auto border border-gray-300 rounded-full shadow md:hidden down left-1/2 -translate-x-1/2 -top-2 full bg-gray-50" onclick="toggleResults()">
+      <%= heroicon "chevron-down", class: "w-4 h-4 text-gray-500 mx-auto" %>
+    </button>
+      <%= form_with method: :get, url: "/map", data: { turbo_frame: 'trip-results', turbo_action: "advance", controller: "search-form" }  do |form| %>
+        <div class="flex items-center gap-x-2">
+          <div class="relative w-full">
+            <div class="my-2">
+              <%= form.combobox :from_stop_id, search_api_train_stations_path(q: @from&.name), value: @from&.id, input: { placeholder: "Gare de départ", required: true, value: @from&.name}, class: "form-input w-full" %>
+            </div>
+            <button class="absolute right-0 z-10 top-1/2 transform -translate-y-1/2 left-1/2 -translate-x-1/2">
+              <%= heroicon "arrows-up-down", class: "w-8 h-8 text-gray-500 mx-auto rounded-full border border-gray-300 shadow p-2 bg-gray-50", "data-action" => "click->search-form#swap" %>
+            </button>
+            <div class="my-2">
+              <%= form.combobox :to_stop_id, search_api_train_stations_path(q: @to&.name), value: @to&.id, input: { placeholder: "Gare d'arrivée", required: true, value: @to&.name }, class: "form-input" %>
+            </div>
+          </div>
+      </div>
+
+      <div class="flex items-center justify-between md:block">
+        <div class="flex gap-x-2">
+          <%= form.select :hour, (4..22).step(4).to_a.map { |h| ["#{h}h", h] }, { include_blank: "Heure de départ", selected: params[:hour] }, class: "form-select w-full bg-transparent h-10", input: { required: true } %>
+        </div>
+
+        <div class="">
+          <%= form.submit "Rechercher", class: "btn-primary text-sm w-full md:mt-4", data: { turbo_submits_with: "..." } %>
+        </div>
+      </div>
+      <turbo-frame id="trip-results">
+        <div class="my-2 max-h-[calc(100vh-24rem)] overflow-y-auto" data-controller="trip-results">
+
+          <% if @results.empty? && @from.present? && @to.present? %>
+            <div class="flex items-center justify-center h-32 text-gray-500">
+              <span class="text-2xl">Aucun résultat</span>
+            </div>
+          <% end %>
+          <% @results.each do |result| %>
+            <div class="px-2 py-4 rounded-lg trip hover:bg-light">
+              <div class="px-2 flex w-fit mb-2 py-px font-medium text-center text-[11px] text-gray-800 bg-accent-light rounded-full">
+                <span class="flex items-center mr-2">
+                  <%= heroicon "clock", class: "w-3 h-3 mr-1", type: :outline %>
+                  <%= display_duration result[:duration] %>
+                </span>
+                <% if result[:transfers] > 0 %>
+                  <span><%= pluralize(result[:transfers], "changement") %></span>
+                <% else %>
+                  <span>Direct</span>
+                <% end %>
+              </div>
+              <% result[:sections].each_with_index do |section, idx| %>
+                <div class="flex items-center section" data-geo-json="<%= section[:geojson].to_json %>">
+                  <span class="w-8 mr-2 <%= idx == 0 ? 'font-bold text-sm text-gray-700' : 'text-xs text-gray-500'  %>">
+                    <%= display_time section[:departure_time] %>
+                  </span>
+                  <span class="block w-3 h-3 mx-[5px] bg-white border-2 border-gray-800 rounded-full"></span>
+
+                  <span class="ml-2 text-gray-700 max-w-44 <%= result.dig(:sections, idx - 1).present? && section[:from] != result.dig(:sections, idx - 1, :to) ? 'mt-1' : '' %> <%= idx == 0 || idx == result[:sections].size ? 'font-bold' : 'text-sm font-medium -mt-4' %>">
+                    <%= section[:from] %>
+                  </span>
+                </div>
+
+                <div class="py-6 ml-[49px] -my-4 border-l-4 border-accent/80" data-controller="trip-segment">
+
+                  <div class="px-2 inline-block ml-4 py-px font-medium text-center text-[11px] text-gray-800 bg-accent-light rounded-full">
+                    <%= section[:commercial_mode] %>
+                  </div>
+
+                  <% if section[:stops].count > 2 %>
+                    <div>
+                      <span class="py-1 ml-4 text-xs text-gray-500 cursor-pointer front-medium hover:underline" data-action="click->trip-segment#toggle">
+                        <%= pluralize(section[:stops].count - 2, "arrêt") %>
+                      </span>
+                      <div class="hidden ml-6 text-xs font-medium text-gray-600 stops">
+                        <% section[:stops].slice(0..-2).each_with_index do |stop, index| %>
+                          <% if index > 0 %>
+                            <div class="py-1 text-xs text-gray-500">
+                              <%= stop[:name] %> - <%= display_time(stop[:departure_time]) %>
+                            </div>
+                          <% end %>
+                        <% end %>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
+                <div class="flex items-center">
+                  <span class="w-8 mr-2 <%= idx == result[:sections].size - 1 ? 'font-bold text-sm text-gray-700' : 'text-xs text-gray-500'  %>">
+                    <%= display_time section[:arrival_time] %>
+                  </span>
+                  <span class="block w-3 h-3 mx-[5px] bg-white border-2 border-gray-800 rounded-full"></span>
+
+                  <% if result.dig(:sections, idx + 1).present? && section[:to] != result.dig(:sections, idx + 1, :from) %>
+                    <span class="pt-4 pb-4 ml-2 -mt-4 text-sm font-medium text-gray-700 max-w-44">
+                      <%= section[:to] %>
+                    </span>
+                  <% end %>
+
+                  <% if idx == result[:sections].size - 1 %>
+                    <span class="ml-2 font-bold text-gray-700 max-w-44">
+                      <%= section[:to] %>
+                    </span>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+            <hr class="h-px mx-auto w-[80%] my-4 bg-gray-200" />
+
+          <% end %>
+        </div>
+
+      </turbo-frame>
+    <% end %>
+    <section class="text-xs font-medium text-gray-500" data-controller="map-filters">
+      <div class="flex items-center justify-between mt-1">
+        <span class="flex flex-col flex-grow">
+          <span class="text-xs font-semibold text-gray-700">Afficher les voies vélo</span>
+        </span>
+
+        <button type="button" class="relative inline-flex items-center justify-center flex-shrink-0 w-10 h-5 rounded-full cursor-pointer group focus:outline-none focus:ring-2 focus:accent-dark focus:ring-offset-2" role="switch" aria-checked="false" data-action="click->map-filters#toggleTracks">
+          <span class="sr-only">Afficher les voies Vélo</span>
+          <span aria-hidden="true" class="absolute w-full h-full pointer-events-none rounded-md"></span>
+          <span aria-hidden="true" class="absolute h-4 mx-auto bg-gray-200 rounded-full pointer-events-none w-9 transition-colors duration-200 ease-in-out slider-bg"></span>
+          <span aria-hidden="true" class="absolute left-0 inline-block w-5 h-5 bg-white border rounded-full shadow pointer-events-none border-accent slider-fg translate-x-0 transform ring-0 transition-transform duration-200 ease-in-out"></span>
+        </button>
+      </div>
+      <div class="mt-2">
+        <div class="flex mb-1 gap-x-1">
+          <span class="bg-[#60d394]/80 rounded w-6 h-3"></span>
+          <span class="bg-[#aaf683]/80 rounded w-6 h-3"></span>
+          <span class="bg-[#ffd97d]/80 rounded w-6 h-3"></span>
+        </div>
+        <span>15 / 30 / 60 min de vélo depuis une gare</span>
+      </div>
+    </section>
+  </div>
+  <div id="map" class="w-screen h-screen" data-controller="map">
+
+  </div>
+</div>
+
+<script>
+  const toggleMenu = () => {
+    const menu = document.querySelector('.menu')
+    menu.classList.toggle('hidden')
+  }
+</script>

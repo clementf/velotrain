@@ -7,6 +7,7 @@ Rails.application.routes.draw do
 
   get "/" => "pages#home"
   get "/about" => "pages#about"
+  get "/map" => "pages#map"
 
   namespace :api do
     resources :paths, only: [:index, :show]

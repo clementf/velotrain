@@ -1,166 +1,337 @@
-<script>
-  const toggleResults = () => {
-    const searchContainer = document.getElementById('search-container')
-    let offset = window.innerHeight - 240
-    searchContainer.style.transform = searchContainer.style.transform === 'translateY(0px)' ? `translateY(${offset}px)` : 'translateY(0px)'
-    searchContainer.querySelector('.up').classList.toggle('hidden')
-    searchContainer.querySelector('.down').classList.toggle('hidden')
-  }
-</script>
-<div class="">
-  <div class="absolute md:max-w-96 z-20 h-[100dvh] md:h-auto w-full px-8 pb-4 pt-2 md:pt-4 shadow-lg transition-transform md:rounded-lg bg-white/80 md:translate-y-0 translate-y-[calc(100dvh_-_240px)] md:w-auto backdrop-blur-sm md:top-4 md:left-4" id="search-container">
-    <button class="absolute p-2 mx-auto border border-gray-300 rounded-full shadow md:hidden up left-1/2 -translate-x-1/2 -top-5 full bg-gray-50" onclick="toggleResults()">
-      <%= heroicon "chevron-up", class: "w-4 h-4 text-gray-500 mx-auto" %>
-    </button>
-    <button class="absolute hidden p-2 mx-auto border border-gray-300 rounded-full shadow md:hidden down left-1/2 -translate-x-1/2 -top-2 full bg-gray-50" onclick="toggleResults()">
-      <%= heroicon "chevron-down", class: "w-4 h-4 text-gray-500 mx-auto" %>
-    </button>
-      <h1 class="mt-1 text-lg font-bold text-gray-600">Itinéraire VéloTrain</h1>
-      <%= form_with method: :get, url: "/", data: { turbo_frame: 'trip-results', turbo_action: "advance", controller: "search-form" }  do |form| %>
-        <div class="flex items-center gap-x-2">
-          <div class="relative w-full">
-            <div class="my-2">
-              <%= form.combobox :from_stop_id, search_api_train_stations_path(q: @from&.name), value: @from&.id, input: { placeholder: "Gare de départ", required: true, value: @from&.name}, class: "form-input w-full" %>
-            </div>
-            <button class="absolute right-0 z-10 top-1/2 transform -translate-y-1/2 left-1/2 -translate-x-1/2">
-              <%= heroicon "arrows-up-down", class: "w-8 h-8 text-gray-500 mx-auto rounded-full border border-gray-300 shadow p-2 bg-gray-50", "data-action" => "click->search-form#swap" %>
-            </button>
-            <div class="my-2">
-              <%= form.combobox :to_stop_id, search_api_train_stations_path(q: @to&.name), value: @to&.id, input: { placeholder: "Gare d'arrivée", required: true, value: @to&.name }, class: "form-input" %>
+<nav class="absolute top-0 left-0 right-0 z-20 p-6 font-medium text-gray-700 bg-transparent">
+  <ul class="flex justify-center space-x-8">
+    <li>
+      <a href="/map" class="hover:underline">Carte</a>
+    </li>
+    <li>
+      <a href="#features" class="hover:underline">Fonctionnalités</a>
+    </li>
+    <li>
+      <a href="#faq" class="hover:underline">FAQ</a>
+    </li>
+  </ul>
+</nav>
+<div class="px-4 pb-24 mx-auto bg-topography lg:px-0">
+  <section class="text-center">
+    <h1 class="pt-32 mx-auto max-w-sm animate-slide-fade-in text-3xl font-semibold !leading-[1.2] opacity-0 [animation-delay:100ms] sm:text-4xl md:max-w-lg md:text-5xl lg:max-w-2xl lg:text-6xl xl:max-w-5xl">Découvre la France en voyageant en train et à vélo</h1>
+    <h2 class="mt-8 mx-auto max-w-sm animate-slide-fade-in !leading-relaxed text-gray-500 opacity-0 [animation-delay:300ms] sm:max-w-xl sm:text-lg md:max-w-xl lg:max-w-3xl">Visualise les zones facilement accessibles à vélo depuis une gare. Trouve le train le plus adapté pour rejoindre ta destination, et profite du paysage ! ☀️</h2>
+  </section>
+
+  <div class="w-full mx-auto my-12 text-center opacity-0 animate-slide-fade-in [animation-delay:600ms]">
+    <a href="/map" class="btn-primary">Explorer la carte</a>
+  </div>
+
+  <section class="max-w-5xl mx-auto animate-slide-fade-in [animation-delay:800ms] opacity-0">
+
+    <div class="bg-white shadow-xl rounded-2xl">
+      <div class="relative flex items-center">
+        <div class="p-4 flex items-center gap-1 sm:gap-1.5">
+          <div class="size-2.5 rounded-full bg-gray-200 sm:size-3"></div>
+          <div class="size-2.5 rounded-full bg-gray-200 sm:size-3"></div>
+          <div class="size-2.5 rounded-full bg-gray-200 sm:size-3"></div>
+        </div>
+
+        <div class="absolute flex items-center px-8 py-1 bg-gray-100 rounded-full left-1/2 transform -translate-x-1/2">
+          <span class="text-xs font-medium text-gray-700">velotrain.fr</span>
+        </div>
+      </div>
+
+      <div class="relative p-1">
+        <%= video_tag "demo.mp4", autoplay: true, loop: true, muted: true, playsinline: true, class: "object-cover rounded-xl" %>
+      </div>
+    </div>
+  </section>
+
+</div>
+<div class="bg-gradient-to-b from-[#FFFFFF] to-[#F8F2EE]  px-4 lg:px-0 mx-auto pb-24" id="features">
+  <section class="pt-12">
+    <h4 class="pb-4 text-sm font-semibold tracking-widest text-center uppercase text-accent-dark">
+      Fonctionnalités
+    </h4>
+    <h2 class="mx-auto max-w-sm text-gray-700 text-3xl font-semibold !leading-[1.2] sm:text-3xl md:max-w-lg md:text-4xl lg:max-w-2xl lg:text-5xl xl:max-w-5xl text-center">Qu'est ce que permet VéloTrain ?</h2>
+
+    <p class="text-center mt-8 mx-auto max-w-sm !leading-relaxed text-gray-500 sm:max-w-xl sm:text-lg md:max-w-xl lg:max-w-3xl">
+    VeloTrain permet d'explorer quelles sont les zones accessibles à vélo depuis une gare, puis de trouver un itineraire où le velo est accepté sans avoir besoin de le demonter.
+    </p>
+
+    <div class="relative w-full max-w-5xl mx-auto my-12">
+      <div class="absolute z-10 p-1 rounded-full shadow-lg bg-white/90 backdrop-blur top-6 left-1/2 transform -translate-x-1/2">
+        <div class="flex items-center gap-1">
+          <button id="exploreBtn" class="rounded-full px-6 py-1.5 text-sm font-medium bg-accent text-white">exploration</button>
+          <button id="tripsBtn" class="rounded-full px-6 py-1.5 text-sm font-medium bg-transparent text-gray-700">itinéraires</button>
+          <button id="cyclingPathsBtn" class="rounded-full px-6 py-1.5 text-sm font-medium whitespace-nowrap bg-transparent text-gray-700">voies cyclables</button>
+        </div>
+      </div>
+
+      <!-- Carousel -->
+      <div id="carousel" class="relative h-[630px] w-full rounded-3xl overflow-hidden">
+        <div class="absolute inset-0 opacity-100 transition-opacity duration-500">
+          <%= image_tag "explore_areas.png", class: "object-cover w-full h-full", loading: "lazy" %>
+          <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+          <div class="absolute bottom-8 right-2 md:right-8 max-w-[400px]">
+            <div class="px-6 py-4 shadow-lg bg-white/80 backdrop-blur rounded-3xl">
+              <p class="text-sm text-gray-600">
+              La carte interactive te permet de visualiser les zones accessibles à vélo depuis une gare.
+              </p>
             </div>
           </div>
-      </div>
-
-      <div class="flex items-center justify-between md:block">
-        <div class="flex gap-x-2">
-          <%= form.select :hour, (4..22).step(4).to_a.map { |h| ["#{h}h", h] }, { include_blank: "Heure de départ", selected: params[:hour] }, class: "form-select w-full bg-transparent h-10", input: { required: true } %>
         </div>
-
-        <div class="">
-          <%= form.submit "Rechercher", class: "btn-primary w-full md:mt-4", data: { turbo_submits_with: "..." } %>
-        </div>
-      </div>
-      <turbo-frame id="trip-results">
-        <div class="my-2 max-h-[calc(100vh-24rem)] overflow-y-auto" data-controller="trip-results">
-
-          <% if @results.empty? && @from.present? && @to.present? %>
-            <div class="flex items-center justify-center h-32 text-gray-500">
-              <span class="text-2xl">Aucun résultat</span>
+        <div class="absolute inset-0 opacity-0 transition-opacity duration-500">
+          <%= image_tag "trips.webp", class: "object-cover w-full h-full", loading: "lazy" %>
+          <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+          <div class="absolute bottom-8 right-2 md:right-8 max-w-[400px]">
+            <div class="px-6 py-4 shadow-lg bg-white/80 backdrop-blur rounded-3xl">
+              <p class="text-sm text-gray-600">
+              Les itinéraires comportent uniquement des trains qui acceptent les vélos. (TER, Intercités, OUIGO classique)
+              </p>
+              <p class="mt-1 text-[10px] text-gray-600">
+              Les TGV et les OUIGO ne sont pas pris encore pris en compte, bien que certains acceptent les vélos.
             </div>
-          <% end %>
-          <% @results.each do |result| %>
-            <div class="px-2 py-4 rounded-lg trip hover:bg-emerald-50">
-              <div class="px-2 flex w-fit mb-2 py-px font-medium text-center text-[11px] text-white bg-emerald-800 rounded-full">
-                <span class="flex items-center mr-2">
-                  <%= heroicon "clock", class: "w-3 h-3 mr-1", type: :outline %>
-                  <%= display_duration result[:duration] %>
-                </span>
-                <% if result[:transfers] > 0 %>
-                  <span><%= pluralize(result[:transfers], "changement") %></span>
-                <% else %>
-                  <span>Direct</span>
-                <% end %>
-              </div>
-              <% result[:sections].each_with_index do |section, idx| %>
-                <div class="flex items-center section" data-geo-json="<%= section[:geojson].to_json %>">
-                  <span class="w-8 mr-2 <%= idx == 0 ? 'font-bold text-sm text-gray-700' : 'text-xs text-gray-500'  %>">
-                    <%= display_time section[:departure_time] %>
-                  </span>
-                  <span class="block w-3 h-3 mx-[5px] bg-white border-2 border-gray-800 rounded-full"></span>
-
-                  <span class="ml-2 text-gray-700 max-w-44 <%= result.dig(:sections, idx - 1).present? && section[:from] != result.dig(:sections, idx - 1, :to) ? 'mt-1' : '' %> <%= idx == 0 || idx == result[:sections].size ? 'font-bold' : 'text-sm font-medium -mt-4' %>">
-                    <%= section[:from] %>
-                  </span>
-                </div>
-
-                <div class="py-6 ml-[49px] -my-4 border-l-4 border-emerald-600/80" data-controller="trip-segment">
-
-                  <div class="px-2 inline-block ml-4 py-px font-medium text-center text-[11px] text-white bg-emerald-800 rounded-full">
-                    <%= section[:commercial_mode] %>
-                  </div>
-
-                  <% if section[:stops].count > 2 %>
-                    <div>
-                      <span class="py-1 ml-4 text-xs text-gray-500 cursor-pointer front-medium hover:underline" data-action="click->trip-segment#toggle">
-                        <%= pluralize(section[:stops].count - 2, "arrêt") %>
-                      </span>
-                      <div class="hidden ml-6 text-xs font-medium text-gray-600 stops">
-                        <% section[:stops].slice(0..-2).each_with_index do |stop, index| %>
-                          <% if index > 0 %>
-                            <div class="py-1 text-xs text-gray-500">
-                              <%= stop[:name] %> - <%= display_time(stop[:departure_time]) %>
-                            </div>
-                          <% end %>
-                        <% end %>
-                      </div>
-                    </div>
-                  <% end %>
-                </div>
-                <div class="flex items-center">
-                  <span class="w-8 mr-2 <%= idx == result[:sections].size - 1 ? 'font-bold text-sm text-gray-700' : 'text-xs text-gray-500'  %>">
-                    <%= display_time section[:arrival_time] %>
-                  </span>
-                  <span class="block w-3 h-3 mx-[5px] bg-white border-2 border-gray-800 rounded-full"></span>
-
-                  <% if result.dig(:sections, idx + 1).present? && section[:to] != result.dig(:sections, idx + 1, :from) %>
-                    <span class="pt-4 pb-4 ml-2 -mt-4 text-sm font-medium text-gray-700 max-w-44">
-                      <%= section[:to] %>
-                    </span>
-                  <% end %>
-
-                  <% if idx == result[:sections].size - 1 %>
-                    <span class="ml-2 font-bold text-gray-700 max-w-44">
-                      <%= section[:to] %>
-                    </span>
-                  <% end %>
-                </div>
-              <% end %>
+          </div>
+        </div>
+        <div class="absolute inset-0 opacity-0 transition-opacity duration-500">
+          <%= image_tag "cycling_paths.png", class: "object-cover w-full h-full", loading: "lazy" %>
+          <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+          <div class="absolute bottom-8 right-2 md:right-8 max-w-[400px]">
+            <div class="px-6 py-4 shadow-lg bg-white/80 backdrop-blur rounded-3xl">
+              <p class="text-sm text-gray-600">
+              Les voies cyclables sont mises en avant pour te permettre de planifier ton trajet en prenant en compte les voies cyclables existantes.
+              </p>
             </div>
-            <hr class="h-px mx-auto w-[80%] my-4 bg-gray-200" />
-
-          <% end %>
+          </div>
         </div>
-
-      </turbo-frame>
-    <% end %>
-    <section class="text-xs font-medium text-gray-500" data-controller="map-filters">
-      <div class="flex items-center justify-between mt-1">
-        <span class="flex flex-col flex-grow">
-          <span class="text-xs font-semibold text-gray-700">Afficher les voies vélo</span>
-        </span>
-
-        <button type="button" class="relative inline-flex items-center justify-center flex-shrink-0 w-10 h-5 rounded-full cursor-pointer group focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2" role="switch" aria-checked="false" data-action="click->map-filters#toggleTracks">
-          <span class="sr-only">Afficher les voies Vélo</span>
-          <span aria-hidden="true" class="absolute w-full h-full pointer-events-none rounded-md"></span>
-          <!-- Enabled: "bg-emerald-600", Not Enabled: "bg-gray-200" -->
-          <span aria-hidden="true" class="absolute h-4 mx-auto bg-gray-200 rounded-full pointer-events-none w-9 transition-colors duration-200 ease-in-out slider-bg"></span>
-          <!-- Enabled: "translate-x-5", Not Enabled: "translate-x-0" -->
-          <span aria-hidden="true" class="absolute left-0 inline-block w-5 h-5 bg-white border border-gray-200 rounded-full shadow pointer-events-none slider-fg translate-x-0 transform ring-0 transition-transform duration-200 ease-in-out"></span>
-        </button>
       </div>
-      <div class="mt-2">
-        <div class="flex mb-1 gap-x-1">
-          <span class="bg-[#60d394]/80 rounded w-6 h-3"></span>
-          <span class="bg-[#aaf683]/80 rounded w-6 h-3"></span>
-          <span class="bg-[#ffd97d]/80 rounded w-6 h-3"></span>
+  </section>
+    </div>
+
+    <section class="px-4 mb-12 lg:px-0">
+      <div class="max-w-4xl pt-12 mx-auto">
+        <h4 class="pb-4 text-sm font-semibold tracking-widest text-center uppercase text-accent-dark">
+          Roadmap
+        </h4>
+        <h2 class="mx-auto max-w-sm text-gray-700 text-3xl font-semibold !leading-[1.2] sm:text-3xl md:max-w-lg md:text-4xl lg:max-w-2xl lg:text-5xl xl:max-w-5xl text-center">Dans les cartons</h2>
+
+        <p class="text-center mt-4 mb-8 mx-auto max-w-sm !leading-relaxed text-gray-500 sm:max-w-xl sm:text-lg md:max-w-xl lg:max-w-3xl">
+        Voici les fonctionnalités prévues pour les prochaines mises à jour de VéloTrain.
+        </p>
+
+        <ul class="space-y-4 max-w-prose">
+          <li class="flex items-center font-medium">
+            <%= render "completed_item" %>
+            <span class="text-gray-500 line-through">Affichage des gares sur la carte</span>
+          </li>
+          <li class="flex items-center font-medium">
+            <%= render "completed_item" %>
+            <span class="text-gray-500 line-through">Calcul des zones accessibles en vélo</span>
+          </li>
+          <li class="flex items-center font-medium">
+            <%= render "completed_item" %>
+            <span class="text-gray-500 line-through">Calcul d'itinéraires de train pouvant emporter des vélos</span>
+          </li>
+          <li class="flex items-center font-medium">
+            <%= render "completed_item" %>
+            <span class="text-gray-500 line-through">Affichage des voies cyclables</span>
+          </li>
+
+          <li class="flex items-center font-medium">
+            <%= render "todo_item" %>
+            <span class="text-gray-700">Calcul des itinéraires depuis n'importe quel endroit vers n'importe quel autre endroit (en combinant train et vélo)</span>
+          </li>
+          <li class="flex items-center font-medium">
+            <%= render "todo_item" %>
+            <span class="text-gray-700">Sélection d'une gare et visualisation des zone accessibles correspondantes</span>
+          </li>
+          <li class="flex items-center font-medium">
+            <%= render "todo_item" %>
+            <span class="text-gray-700">Affichage des conditions spécifiques pour chaque region (certaines exigent une réservation pour les vélos, pour certaines periodes)</span>
+          </li>
+          <li class="flex items-center font-medium">
+            <%= render "todo_item" %>
+            <span class="text-gray-700">Affichage d'infos supplémentaires sur les voies vélo</span>
+          </li>
+          <li class="flex items-center font-medium">
+            <%= render "todo_item" %>
+            <span class="text-gray-700">Affichage des prix et réservations des trains</span>
+          </li>
+          <li class="flex items-center font-medium">
+            <%= render "todo_item" %>
+            <span class="text-gray-700">Ajout des données du réseau transilien</span>
+          </li>
+          <li class="flex items-center font-medium">
+            <%= render "todo_item" %>
+            <span class="text-gray-700">Ajout des données pour la Corse.</span>
+          </li>
+        </ul>
+
+        <div class="p-8 mt-12 text-center bg-gray-100 rounded-xl">
+          <h3 class="mb-4 text-2xl font-bold text-gray-900">Une idée pour améliorer VéloTrain ?</h3>
+          <p class="mb-6 text-lg text-gray-600">
+          Le projet est en constante évolution et je suis toujours à la recherche de nouvelles idées pour l'améliorer. C'est aussi un projet collaboratif, alors n'hésite pas à me faire part de tes suggestions.
+          </p>
+          <a href="mailto:clement@bluegreen.cc" class="btn-primary">Proposer une fonctionnalité</a>
         </div>
-        <span>15 / 30 / 60 min de vélo depuis une gare</span>
-      </div>
-
-      <a href="/about" class="flex items-center mt-2 hover:underline font-semibold text-gray-700">
-        <%= heroicon "information-circle", type: :mini, class: "w-4 h-4 text-gray-700 mr-1" %>
-        En savoir plus
-      </a>
     </section>
-  </div>
-  <div id="map" class="w-screen h-screen" data-controller="map">
 
-  </div>
-</div>
+    <section class="bg-gradient-to-b px-4 lg:px-0 from-[#FFFFFF] to-[#F8F2EE] mx-auto pb-24" id="faq">
+      <div class="max-w-4xl pt-12 mx-auto">
+        <h4 class="pb-4 text-sm font-semibold tracking-widest text-center uppercase text-accent-dark">
+          Kesako
+        </h4>
+        <h2 class="mx-auto max-w-sm text-gray-700 text-3xl font-semibold !leading-[1.2] sm:text-3xl md:max-w-lg md:text-4xl lg:max-w-2xl lg:text-5xl xl:max-w-5xl text-center">Foire aux questions</h2>
 
-<script>
-  const toggleMenu = () => {
-    const menu = document.querySelector('.menu')
-    menu.classList.toggle('hidden')
-  }
-</script>
+        <p class="text-center my-8 mx-auto max-w-sm !leading-relaxed text-gray-500 sm:max-w-xl sm:text-lg md:max-w-xl lg:max-w-3xl">
+        Pas de réponse à ta question ? N'hésite pas à nous contacter directement.
+        </p>
+
+        <div class="mb-12 space-y-4">
+          <details class="bg-white border border-gray-200 faq-item rounded-xl">
+            <summary class="flex items-center justify-between p-6 cursor-pointer">
+              <h3 class="text-lg font-semibold">Pourquoi VéloTrain ?</h3>
+              <span class="text-2xl icon">+</span>
+            </summary>
+            <div class="px-6 pb-6 text-gray-600">
+              <p class="mb-4">Si l'on choisit ce mode de transport, par exemple pour ses prochaines vacances, on se retrouve vite contraint par la nécéssité de la proximité d'une gare.</p>
+              <p class="mb-4">Or, à ma connaissance, il n'existait pas, jusqu'à présent de moyen de consulter toutes les zones accessibles en vélo depuis une gare Française.</p>
+              <p>Poussé par l'envie de pouvoir planifier mes prochains voyages en train vélo, j'ai donc décidé de créer cette carte.</p>
+              <p>Suite aux retours positifs, j'ai décidé de continuer à améliorer le projet, et à ajouter de nouvelles fonctionnalités, y compris les itinéraires empruntables, qui est la donnée qui manque le plus souvent lors de la plannification d'un voyage en train + vélo.</p>
+            </div>
+          </details>
+
+          <details class="bg-white border border-gray-200 faq-item rounded-xl">
+            <summary class="flex items-center justify-between p-6 cursor-pointer">
+              <h3 class="text-lg font-semibold">Quelles sont les lignes de train compatibles ?</h3>
+              <span class="text-2xl icon">+</span>
+            </summary>
+            <div class="px-6 pb-6 text-gray-600">
+              <p class="mb-4">Les lignes TER, Intercités, OuiGo Classique, et même les Intercités de nuit sont prises en compte.</p>
+              <p>Bien que certains TGV acceptent les vélos, ils ne sont pas pris en compte pour le moment (les données ne sont pas disponibles), il en va de même pour les OUIGO.</p>
+            </div>
+          </details>
+
+          <details class="bg-white border border-gray-200 faq-item rounded-xl">
+            <summary class="flex items-center justify-between p-6 cursor-pointer">
+              <h3 class="text-lg font-semibold">Comment sont calculés les itinéraires ?</h3>
+              <span class="text-2xl icon">+</span>
+            </summary>
+            <div class="px-6 pb-6 text-gray-600">
+              <p>
+              Les itinéraires sont calculés en utilisant les données de la SNCF, et reflètent les horaires réels des trains. <br/>
+              Les correspondances sont prises en compte, et les trains sont filtrés pour ne montrer que ceux qui acceptent les vélos.
+              Ils sont affichées de manière à presenter en premier lieu des trajets directs, puis des trajets avec correspondance.</p>
+            </div>
+          </details>
+
+          <details class="bg-white border border-gray-200 faq-item rounded-xl">
+            <summary class="flex items-center justify-between p-6 cursor-pointer">
+              <h3 class="text-lg font-semibold">Quelle sont les fonctionnalités a venir ?</h3>
+              <span class="text-2xl icon">+</span>
+            </summary>
+            <div class="px-6 pb-6 text-gray-600">
+              <p>C'est juste un peu plus haut ☝️</p>
+            </div>
+          </details>
+
+          <details class="bg-white border border-gray-200 faq-item rounded-xl">
+            <summary class="flex items-center justify-between p-6 cursor-pointer">
+              <h3 class="text-lg font-semibold">J'ai trouvé un bug, j'ai une idee d'amélioration, comment le faire remonter ?</h3>
+              <span class="text-2xl icon">+</span>
+            </summary>
+            <div class="px-6 pb-6 text-gray-600">
+              <p>Si tu as trouvé un bug, tu as une idee d'amélioration, n'hésite pas à nous le signaler directement par email (<a href="mailto:clement@bluegreen.cc" class="font-medium hover:underline">clement@bluegreen.cc</a>).</p>
+            </div>
+          </details>
+
+          <details class="bg-white border border-gray-200 faq-item rounded-xl">
+            <summary class="flex items-center justify-between p-6 cursor-pointer">
+              <h3 class="text-lg font-semibold">Comment nous contacter ?</h3>
+              <span class="text-2xl icon">+</span>
+            </summary>
+            <div class="px-6 pb-6 text-gray-600">
+              <p>
+              N'hésitez pas à me contacter sur <a class="font-medium hover:underline" href="https://linkedin.com/in/clementferey">LinkedIn</a>, <a class="font-medium hover:underline" href="https://twitter.com/_clementf">Twitter / X</a> ou directement par email <a class="font-medium hover:underline" href="mailto:clement@bluegreen.cc">(clement@bluegreen.cc)</a> c'est un plaisir d'échanger sur le sujet, de recueillir du feedback.
+              </p>
+            </div>
+          </details>
+        </div>
+    </section>
+
+    <footer class="relative">
+      <%= image_tag 'backdrop.jpg', class: 'object-cover w-full h-80', loading: 'lazy' %>
+      <div class="absolute top-0 bottom-0 left-0 right-0 py-16 mx-auto text-white transition hover:backdrop-blur-sm">
+        <div class="flex flex-col items-center justify-center gap-4">
+          <h2 class="my-4 text-3xl font-semibold text-center">Prêt à explorer la France en train et à vélo ?</h2>
+          <a href="/map" class="btn-primary">Commencer</a>
+        </div>
+      </div>
+    </footer>
+
+
+    <script>
+      const exploreBtn = document.getElementById('exploreBtn');
+      const tripsBtn = document.getElementById('tripsBtn');
+      const cyclingPathsBtn = document.getElementById('cyclingPathsBtn');
+      const slides = document.querySelectorAll('#carousel > div');
+      const buttons = [exploreBtn, tripsBtn, cyclingPathsBtn];
+      let currentSlide = 0;
+      let autoRotateInterval;
+
+      function showSlide(index) {
+        slides[currentSlide].classList.remove('opacity-100');
+        slides[currentSlide].classList.add('opacity-0');
+        slides[index].classList.remove('opacity-0');
+        slides[index].classList.add('opacity-100');
+        currentSlide = index;
+        setActiveButton(buttons[index]);
+      }
+
+      function startAutoRotate() {
+        autoRotateInterval = setInterval(() => {
+          showSlide((currentSlide + 1) % slides.length);
+        }, 8000);
+      }
+
+      function stopAutoRotate() {
+        clearInterval(autoRotateInterval);
+      }
+
+      function setActiveButton(button) {
+        buttons.forEach(btn => {
+          btn.classList.remove('bg-accent', 'text-white');
+          btn.classList.add('bg-transparent', 'text-gray-700');
+        });
+        button.classList.remove('bg-transparent', 'text-gray-700');
+        button.classList.add('bg-accent', 'text-white');
+      }
+
+      buttons.forEach((button, index) => {
+        button.addEventListener('click', () => {
+          showSlide(index);
+          stopAutoRotate();
+          startAutoRotate();
+        });
+      });
+
+      // Start auto-rotate on page load
+      startAutoRotate();
+
+      // Stop auto-rotate when user interacts with the carousel
+      document.getElementById('carousel').addEventListener('mouseenter', stopAutoRotate);
+      document.getElementById('carousel').addEventListener('mouseleave', startAutoRotate);
+
+      // when user scrolls past the nav menu, make it sticky
+      const nav = document.querySelector('nav');
+      const navOffset = '80'
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > navOffset) {
+          nav.classList.add('fixed');
+          nav.classList.add('bg-light/80');
+          nav.classList.remove('absolute');
+          nav.classList.add('backdrop-blur-sm');
+        } else {
+          nav.classList.remove('fixed');
+          nav.classList.remove('bg-light/80');
+          nav.classList.add('absolute');
+          nav.classList.remove('backdrop-blur-sm');
+        }
+      });
+    </script>

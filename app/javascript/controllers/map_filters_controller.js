@@ -7,7 +7,7 @@ export default class extends Controller {
     if (button.ariaChecked === "false") {
       button.ariaChecked = "true";
       button.querySelector("span.slider-bg").classList.remove("bg-gray-200");
-      button.querySelector("span.slider-bg").classList.add("bg-emerald-500");
+      button.querySelector("span.slider-bg").classList.add("bg-accent-dark");
 
       button.querySelector("span.slider-fg").classList.remove("translate-x-0");
       button.querySelector("span.slider-fg").classList.add("translate-x-5");
@@ -15,7 +15,7 @@ export default class extends Controller {
 
     } else {
       button.ariaChecked = "false";
-      button.querySelector("span.slider-bg").classList.remove("bg-emerald-500");
+      button.querySelector("span.slider-bg").classList.remove("bg-accent-dark");
       button.querySelector("span.slider-bg").classList.add("bg-gray-200");
 
       button.querySelector("span.slider-fg").classList.remove("translate-x-5");

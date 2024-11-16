@@ -1,5 +1,8 @@
 class PagesController < ApplicationController
   def home
+  end
+
+  def map
     router = Routing::SncfApiRouter.new
 
     @from = Gtfs::Stop.find_by(id: params[:from_stop_id])
@@ -7,7 +10,6 @@ class PagesController < ApplicationController
 
     if @from.nil? || @to.nil?
       @results = []
-      render "pages/home"
       return
     end
 
