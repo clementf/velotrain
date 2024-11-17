@@ -1,1 +1,5 @@
 /* Application styles */
+.bg-topography {
+  background-color: #f8f2ee;
+  background-image: url("topography.svg");
+}
