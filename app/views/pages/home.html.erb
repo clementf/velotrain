@@ -56,10 +56,10 @@
 
     <div class="relative w-full max-w-5xl mx-auto my-12">
       <div class="absolute z-10 p-1 rounded-full shadow-lg bg-white/90 backdrop-blur top-6 left-1/2 transform -translate-x-1/2">
-        <div class="flex items-center gap-1">
-          <button id="exploreBtn" class="rounded-full px-6 py-1.5 text-sm font-medium bg-accent text-white">exploration</button>
-          <button id="tripsBtn" class="rounded-full px-6 py-1.5 text-sm font-medium bg-transparent text-gray-700">itinéraires</button>
-          <button id="cyclingPathsBtn" class="rounded-full px-6 py-1.5 text-sm font-medium whitespace-nowrap bg-transparent text-gray-700">voies cyclables</button>
+        <div class="flex items-center">
+          <button id="exploreBtn" class="rounded-full md:px-6 px-2 py-1.5 text-sm font-medium bg-accent text-white">exploration</button>
+          <button id="tripsBtn" class="rounded-full md:px-6 px-2 py-1.5 text-sm font-medium bg-transparent text-gray-700">itinéraires</button>
+          <button id="cyclingPathsBtn" class="rounded-full md:px-6 px-2 py-1.5 text-sm font-medium whitespace-nowrap bg-transparent text-gray-700">voies cyclables</button>
         </div>
       </div>
 
@@ -68,7 +68,7 @@
         <div class="absolute inset-0 opacity-100 transition-opacity duration-500">
           <%= image_tag "explore_areas.png", class: "object-cover w-full h-full", loading: "lazy" %>
           <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-          <div class="absolute bottom-8 right-2 md:right-8 max-w-[400px]">
+          <div class="absolute bottom-0 left-0 md:left-auto md:bottom-8 right-0 md:right-8 md:max-w-[400px]">
             <div class="px-6 py-4 shadow-lg bg-white/80 backdrop-blur rounded-3xl">
               <p class="text-sm text-gray-600">
               La carte interactive te permet de visualiser les zones accessibles à vélo depuis une gare.
@@ -79,7 +79,7 @@
         <div class="absolute inset-0 opacity-0 transition-opacity duration-500">
           <%= image_tag "trips.webp", class: "object-cover w-full h-full", loading: "lazy" %>
           <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-          <div class="absolute bottom-8 right-2 md:right-8 max-w-[400px]">
+          <div class="absolute bottom-0 left-0 md:left-auto md:bottom-8 right-0 md:right-8 md:max-w-[400px]">
             <div class="px-6 py-4 shadow-lg bg-white/80 backdrop-blur rounded-3xl">
               <p class="text-sm text-gray-600">
               Les itinéraires comportent uniquement des trains qui acceptent les vélos. (TER, Intercités, OUIGO classique)
@@ -92,7 +92,7 @@
         <div class="absolute inset-0 opacity-0 transition-opacity duration-500">
           <%= image_tag "cycling_paths.png", class: "object-cover w-full h-full", loading: "lazy" %>
           <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-          <div class="absolute bottom-8 right-2 md:right-8 max-w-[400px]">
+          <div class="absolute bottom-0 left-0 md:left-auto md:bottom-8 right-0 md:right-8 md:max-w-[400px]">
             <div class="px-6 py-4 shadow-lg bg-white/80 backdrop-blur rounded-3xl">
               <p class="text-sm text-gray-600">
               Les voies cyclables sont mises en avant pour te permettre de planifier ton trajet en prenant en compte les voies cyclables existantes.
