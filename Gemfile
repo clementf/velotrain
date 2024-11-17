@@ -12,7 +12,7 @@ gem "solid_queue"
 gem "mission_control-jobs"
 
 # The modern asset pipeline for Rails [https://github.com/rails/propshaft]
-gem "propshaft"
+gem "propshaft", "~> 0.9.0"
 
 # Use postgresql as the database for Active Record
 gem "pg", "~> 1.1"
