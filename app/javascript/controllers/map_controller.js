@@ -132,7 +132,7 @@ export default class extends Controller {
           "text-size": 12,
           "text-anchor": "bottom",
         },
-        minzoom: 9, // This layer will be visible from zoom level 10 and above
+        minzoom: 8, // This layer will be visible from zoom level 10 and above
         filter: ["==", ["get", "drg"], "B"], // Filter to display features with drg property of "A" or "B"
         paint: {
           "text-color": "#333",
@@ -151,7 +151,7 @@ export default class extends Controller {
           "text-size": 12,
           "text-anchor": "bottom",
         },
-        minzoom: 10,
+        minzoom: 9,
         filter: ["==", ["get", "drg"], "C"], // Filter to display features with drg property of "A" or "B"
         paint: {
           "text-color": "#333",
