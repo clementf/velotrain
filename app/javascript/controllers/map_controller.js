@@ -6,7 +6,7 @@ export default class extends Controller {
     var map = new maplibregl.Map({
       container: "map", // container id
       style:
-        "https://api.maptiler.com/maps/basic-v2/style.json?key=kuj5v1XwJShznVUAIGz3", // style URL
+        "https://api.protomaps.com/styles/v2/light.json?key=425d73f4d592980c", // style URL
       bounds: [
         [16, 51.5],
         [-9, 42.37],
@@ -109,7 +109,7 @@ export default class extends Controller {
         source: "train_stations",
         layout: {
           "text-field": ["get", "name"],
-          "text-font": ["Noto Sans Bold"],
+          "text-font": ["Noto Sans Medium"],
           "text-size": 12,
           "text-anchor": "bottom",
         },
@@ -128,7 +128,7 @@ export default class extends Controller {
         source: "train_stations",
         layout: {
           "text-field": ["get", "name"],
-          "text-font": ["Noto Sans Bold"],
+          "text-font": ["Noto Sans Medium"],
           "text-size": 12,
           "text-anchor": "bottom",
         },
@@ -147,7 +147,7 @@ export default class extends Controller {
         source: "train_stations",
         layout: {
           "text-field": ["get", "name"],
-          "text-font": ["Noto Sans Bold"],
+          "text-font": ["Noto Sans Medium"],
           "text-size": 12,
           "text-anchor": "bottom",
         },
