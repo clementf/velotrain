@@ -162,15 +162,15 @@ export default class extends Controller {
 
       // Add click event listener to the train stations layer
       map.on("click", "train_station_labels_A", async function (e) {
-        await placeMarker(e);
+        //await placeMarker(e);
       });
 
       map.on("click", "train_station_labels_B", async function (e) {
-        await placeMarker(e);
+        //await placeMarker(e);
       });
 
       map.on("click", "train_station_labels_C", async function (e) {
-        await placeMarker(e);
+        //await placeMarker(e);
       });
 
       async function placeMarker(e) {
