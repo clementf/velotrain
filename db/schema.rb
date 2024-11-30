@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_09_154831) do
+ActiveRecord::Schema[7.1].define(version: 2024_11_30_091415) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "postgis"
@@ -84,6 +84,15 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_09_154831) do
     t.index ["user_id"], name: "index_ahoy_visits_on_user_id"
     t.index ["visit_token"], name: "index_ahoy_visits_on_visit_token", unique: true
     t.index ["visitor_token", "started_at"], name: "index_ahoy_visits_on_visitor_token_and_started_at"
+  end
+
+  create_table "areas", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "code", null: false
+    t.geometry "geom", limit: {:srid=>4326, :type=>"geometry"}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "index_areas_on_code", unique: true
   end
 
   create_table "gpx_segments", force: :cascade do |t|

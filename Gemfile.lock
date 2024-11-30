@@ -91,6 +91,8 @@ GEM
       minitest (>= 5.1)
       mutex_m
       tzinfo (~> 2.0)
+    addressable (2.8.7)
+      public_suffix (>= 2.0.2, < 7.0)
     ahoy_matey (5.1.0)
       activesupport (>= 6.1)
       device_detector (>= 1)
@@ -138,6 +140,7 @@ GEM
     crass (1.0.6)
     date (3.3.4)
     device_detector (1.1.3)
+    domain_name (0.6.20240107)
     dotenv (3.1.4)
     drb (2.2.1)
     ed25519 (1.3.0)
@@ -163,6 +166,15 @@ GEM
       rails (>= 7.0.7.2)
       stimulus-rails (>= 1.2)
       turbo-rails (>= 1.2)
+    http (5.2.0)
+      addressable (~> 2.8)
+      base64 (~> 0.1)
+      http-cookie (~> 1.0)
+      http-form_data (~> 2.2)
+      llhttp-ffi (~> 0.5.0)
+    http-cookie (1.0.7)
+      domain_name (~> 0.5)
+    http-form_data (2.3.0)
     i18n (1.14.6)
       concurrent-ruby (~> 1.0)
     importmap-rails (2.0.1)
@@ -188,6 +200,9 @@ GEM
       sshkit (>= 1.23.0, < 2.0)
       thor (~> 1.3)
       zeitwerk (~> 2.5)
+    llhttp-ffi (0.5.0)
+      ffi-compiler (~> 1.0)
+      rake (~> 13.0)
     loofah (2.23.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
@@ -243,6 +258,7 @@ GEM
       pry (>= 0.13.0)
     psych (5.2.0)
       stringio
+    public_suffix (6.0.1)
     puma (6.4.2)
       nio4r (~> 2.0)
     raabro (1.4.0)
@@ -358,6 +374,7 @@ DEPENDENCIES
   groupdate
   heroicon-rails!
   hotwire_combobox
+  http
   importmap-rails
   jbuilder
   kamal
