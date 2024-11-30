@@ -5,7 +5,7 @@ class Area < ApplicationRecord
 
   before_validation :set_code
 
-  has_many :regional_bike_rule
+  has_one :regional_bike_rule
 
   def self.from_geojson_url(url)
     response = HTTP.get(url)
