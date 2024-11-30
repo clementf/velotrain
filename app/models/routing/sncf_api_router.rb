@@ -83,8 +83,10 @@ module Routing
           duration: journey.dig("duration"),
           transfers: journey.dig("nb_transfers"),
           sections: journey.dig("sections").select { |section| section.dig("type") == "public_transport" }.map do |section|
+            commercial_mode = section.dig("display_informations", "commercial_mode")
             geojson = section.dig("geojson")
-            bike_rules = find_bike_rules_for_section(geojson) if geojson.present?
+
+            bike_rules = find_bike_rules_for_section(geojson) if geojson.present? && commercial_mode.match?(/TER|HDF/)
 
             {
               from: section.dig("from", "stop_point", "name"),
@@ -93,7 +95,7 @@ module Routing
               departure_time: paris_time_zone.parse(section.dig("departure_date_time")),
               arrival_time: paris_time_zone.parse(section.dig("arrival_date_time")),
               duration: section.dig("duration"),
-              commercial_mode: section.dig("display_informations", "commercial_mode"),
+              commercial_mode: commercial_mode,
               geojson: geojson,
               bike_rules: bike_rules,
               stops: section.dig("stop_date_times").map do |stop|
