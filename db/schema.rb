@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_11_30_091415) do
+ActiveRecord::Schema[7.1].define(version: 2024_11_30_094016) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "postgis"
@@ -168,6 +168,16 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_30_091415) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["center"], name: "index_isochrones_on_center", using: :gist
+  end
+
+  create_table "regional_bike_rules", force: :cascade do |t|
+    t.bigint "area_id", null: false
+    t.string "source_url"
+    t.boolean "bike_always_allowed_without_booking", default: false
+    t.text "extracted_information"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["area_id"], name: "index_regional_bike_rules_on_area_id"
   end
 
   create_table "saved_searches", force: :cascade do |t|
@@ -333,6 +343,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_30_091415) do
   add_foreign_key "gtfs_stop_times", "gtfs_trips"
   add_foreign_key "gtfs_stops", "gtfs_stops", column: "parent_stop_id"
   add_foreign_key "gtfs_trips", "gtfs_routes"
+  add_foreign_key "regional_bike_rules", "areas"
   add_foreign_key "saved_searches", "gtfs_stops", column: "from_stop_id"
   add_foreign_key "saved_searches", "gtfs_stops", column: "to_stop_id"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade

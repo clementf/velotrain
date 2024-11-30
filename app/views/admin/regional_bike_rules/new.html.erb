@@ -1,0 +1,15 @@
+<div class="w-full">
+  <% content_for :title, "New Regional Bike Rule" %>
+
+  <div class="px-4 py-5 bg-white border-b border-gray-200 sm:px-6">
+    <div class="flex flex-wrap items-center justify-between -mt-2 -ml-4 sm:flex-nowrap">
+      <div class="mt-2 ml-4">
+        <h3 class="text-base font-semibold text-gray-900 leading-6">New regional bike rule</h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="px-4 py-5 bg-white sm:px-6">
+    <%= render "form", regional_bike_rule: @regional_bike_rule %>
+  </div>
+</div> 
