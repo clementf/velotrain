@@ -1,8 +1,9 @@
 require 'net/http'
+require 'rgeo/geo_json'
 
 module Routing
   class SncfApiRouter
-    def paths(from, to, datetime: Time.current, min_nb_journeys: 2)
+    def paths(from, to, datetime: Time.current, min_nb_journeys: 1)
       @min_nb_journeys = min_nb_journeys
       @datetime = datetime
       @max_nb_journeys = 4
@@ -67,6 +68,13 @@ module Routing
     end
 
     def format_response(response)
+      unless response.is_a?(Net::HTTPSuccess)
+        Rails.logger.error("SNCF API error: #{response.body}, #{response.code}")
+        return []
+      end
+
+      Rails.logger.debug("SNCF API response: #{response.body}")
+
       paris_time_zone = ActiveSupport::TimeZone["Europe/Paris"]
       JSON.parse(response.body).fetch("journeys", []).map do |journey|
         {
@@ -75,6 +83,9 @@ module Routing
           duration: journey.dig("duration"),
           transfers: journey.dig("nb_transfers"),
           sections: journey.dig("sections").select { |section| section.dig("type") == "public_transport" }.map do |section|
+            geojson = section.dig("geojson")
+            bike_rules = find_bike_rules_for_section(geojson) if geojson.present?
+
             {
               from: section.dig("from", "stop_point", "name"),
               to: section.dig("to", "stop_point", "name"),
@@ -83,7 +94,8 @@ module Routing
               arrival_time: paris_time_zone.parse(section.dig("arrival_date_time")),
               duration: section.dig("duration"),
               commercial_mode: section.dig("display_informations", "commercial_mode"),
-              geojson: section.dig("geojson"),
+              geojson: geojson,
+              bike_rules: bike_rules,
               stops: section.dig("stop_date_times").map do |stop|
                 {
                   name: stop.dig("stop_point", "name"),
@@ -95,6 +107,25 @@ module Routing
           end
         }
       end.sort_by { |journey| journey[:departure_time] }
+    end
+
+    def find_bike_rules_for_section(geojson)
+      return [] unless geojson.present?
+
+      # Find all areas that intersect with this route
+      intersecting_areas = Area.joins(:regional_bike_rule)
+                              .where("ST_Intersects(geom, ST_GeomFromGeoJSON(?))", geojson.to_json)
+                              .includes(:regional_bike_rule)
+
+      # Return the bike rules information for each intersecting area
+      intersecting_areas.map do |area|
+        {
+          region_name: area.name,
+          source_url: area.regional_bike_rule.source_url,
+          extracted_information: area.regional_bike_rule.extracted_information,
+          bike_always_allowed: area.regional_bike_rule.bike_always_allowed_without_booking
+        }
+      end
     end
 
     def url_to_paris

@@ -79,6 +79,30 @@
                     <%= section[:commercial_mode] %>
                   </div>
 
+                  <% if section[:bike_rules].present? %>
+                    <div class="mt-2 ml-4">
+                      <% section[:bike_rules].each do |rule| %>
+                        <div class="flex items-start gap-x-2 text-xs text-gray-600">
+                          <div>
+                            <span class="font-medium"><%= rule[:region_name] %></span>
+                            <% if rule[:bike_always_allowed] %>
+                              <span class="ml-1 text-green-600">(Vélos toujours autorisés)</span>
+                            <% end %>
+                            <% if rule[:extracted_information].present? %>
+                              <p class="mt-1 text-gray-500"><%= rule[:extracted_information] %></p>
+                            <% end %>
+                            <% if rule[:source_url].present? %>
+                              <%= link_to "Plus d'informations", rule[:source_url], 
+                                  class: "text-accent hover:underline", 
+                                  target: "_blank",
+                                  rel: "noopener noreferrer" %>
+                            <% end %>
+                          </div>
+                        </div>
+                      <% end %>
+                    </div>
+                  <% end %>
+
                   <% if section[:stops].count > 2 %>
                     <div>
                       <span class="py-1 ml-4 text-xs text-gray-500 cursor-pointer front-medium hover:underline" data-action="click->trip-segment#toggle">
