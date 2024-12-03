@@ -86,7 +86,7 @@ module Routing
             commercial_mode = section.dig("display_informations", "commercial_mode")
             geojson = section.dig("geojson")
 
-            bike_rules = find_bike_rules_for_section(geojson) if geojson.present? && commercial_mode.match?(/TER|HDF/)
+            bike_rules = find_bike_rules_for_section(geojson) if geojson.present? && !commercial_mode.match?(/OUIGO|ICN/)
 
             {
               from: section.dig("from", "stop_point", "name"),
