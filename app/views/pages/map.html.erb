@@ -45,7 +45,6 @@
           <% if @results.empty? && @from.present? && @to.present? %>
             <div class="h-32 text-center mt-4 text-gray-500">
               <p class="text-2xl mb-2">Aucun résultat</p>
-              <p class="text-sm">Les données de la SNCF ne sont pas disponibles pour le moment. Désolé pour le désagrément.</p>
             </div>
           <% end %>
           <% @results.each do |result| %>
