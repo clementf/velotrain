@@ -83,11 +83,12 @@
                       <% section[:bike_rules].each do |rule| %>
                         <div class="flex items-start gap-x-2 text-xs text-gray-600">
                           <div>
+                            <span class="font-bold"><%= rule[:region_name] %></span>
                             <% if rule[:bike_always_allowed] %>
                               <span class="font-bold">Vélos autorisés sans réservation</span>
                             <% end %>
                             <% if rule[:extracted_information].present? %>
-                              <p class="mt-1 text-gray-500"><%= rule[:extracted_information] %></p>
+                              <p class="mt-1 text-gray-500"><%= rule[:extracted_information].truncate(100) %></p>
                             <% end %>
                             <% if rule[:source_url].present? %>
                               <%= link_to "Plus d'informations", rule[:source_url], 
