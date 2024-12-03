@@ -83,7 +83,7 @@
                       <% section[:bike_rules].each do |rule| %>
                         <div class="flex items-start gap-x-2 text-xs text-gray-600">
                           <div>
-                            <span class="font-bold"><%= rule[:region_name] %></span>
+                            <p class="font-bold"><%= rule[:region_name] %></p>
                             <% if rule[:bike_always_allowed] %>
                               <span class="font-bold">Vélos autorisés sans réservation</span>
                             <% end %>
