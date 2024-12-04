@@ -2,7 +2,7 @@ class Admin::AreasController < ApplicationController
   before_action :set_area, only: [:show, :edit, :update, :destroy]
 
   def index
-    @areas = Area.all
+    @areas = Area.all.order("name")
   end
 
   def show

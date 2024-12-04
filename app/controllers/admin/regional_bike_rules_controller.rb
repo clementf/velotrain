@@ -2,7 +2,7 @@ class Admin::RegionalBikeRulesController < ApplicationController
   before_action :set_regional_bike_rule, only: [:edit, :update, :destroy]
 
   def index
-    @regional_bike_rules = RegionalBikeRule.includes(:area).all
+    @regional_bike_rules = RegionalBikeRule.includes(:area).all.order("areas.name")
   end
 
   def new
