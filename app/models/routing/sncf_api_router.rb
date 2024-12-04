@@ -19,6 +19,7 @@ module Routing
       remi: "network:SNCF:FR:Branding::d5d601cf-e383-4138-8e70-ee1b7fcadd48:",
       remi_exp: "network:SNCF:FR:Branding::8c1ce319-d566-4575-a416-a46730280ce5:",
       solea: "network:SNCF:FR:Branding::45d07532-11f7-4837-98b7-cae82b0ab0c4:",
+      ter_hdf: "network:SNCF:FR:Branding::6dfb1ec4-50b5-42a8-a531-a792b1ea6f2e:",
       transilien: "network:SNCF:TN",
       bike: "physical_mode:Bike"
     }.freeze
