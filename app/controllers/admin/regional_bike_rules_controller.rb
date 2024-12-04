@@ -42,6 +42,6 @@ class Admin::RegionalBikeRulesController < ApplicationController
   end
 
   def regional_bike_rule_params
-    params.require(:regional_bike_rule).permit(:area_id, :source_url, :bike_always_allowed_without_booking, :extracted_information)
+    params.require(:regional_bike_rule).permit(:area_id, :source_url, :bike_always_allowed_without_booking, :extracted_information, :network_code)
   end
 end
