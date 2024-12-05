@@ -5,8 +5,8 @@ class PagesController < ApplicationController
   def map
     router = Routing::SncfApiRouter.new
 
-    @from = Gtfs::Stop.find_by(id: params[:from_stop_id])
-    @to = Gtfs::Stop.find_by(id: params[:to_stop_id])
+    @from = TrainStation.find_by(id: params[:from_stop_id])
+    @to = TrainStation.find_by(id: params[:to_stop_id])
 
     if @from.nil? || @to.nil?
       @results = []
@@ -24,7 +24,7 @@ class PagesController < ApplicationController
       parsed_hour_from_params = ActiveSupport::TimeZone["Europe/Paris"].parse("08:00")
     end
 
-    saved_search = SavedSearch.find_or_initialize_by(from_stop: @from, to_stop: @to, datetime: parsed_hour_from_params)
+    saved_search = SavedSearch.find_or_initialize_by(from_stop: @from.gtfs_stop, to_stop: @to.gtfs_stop, datetime: parsed_hour_from_params)
     if saved_search.persisted?
       @results = saved_search.results.map { |result| result.with_indifferent_access }
     else

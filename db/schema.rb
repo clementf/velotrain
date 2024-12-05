@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_12_04_080017) do
+ActiveRecord::Schema[7.1].define(version: 2024_12_05_203453) do
   create_schema "tiger"
   create_schema "tiger_data"
   create_schema "topology"
@@ -835,6 +835,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_04_080017) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "drg"
+    t.string "uic_code"
     t.index ["lonlat"], name: "index_train_stations_on_lonlat", using: :gist
   end
 

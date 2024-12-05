@@ -12,13 +12,14 @@ class Gtfs::Stop < ApplicationRecord
     StopArea:OCE87686667
   ]
 
-  belongs_to :parent_stop, class_name: "Gtfs::Stop", foreign_key: "parent_stop_id", optional: true
+  belongs_to :parent_stop, class_name: "Gtfs::Stop", foreign_key: "parent_stop_id", optional: true, inverse_of: :children
+  has_many :children, class_name: "Gtfs::Stop", foreign_key: "parent_stop_id", dependent: :destroy, inverse_of: :parent_stop
   has_many :stop_times, class_name: "Gtfs::StopTime", foreign_key: "gtfs_stop_id"
 
   has_many :saved_searches_from, class_name: "SavedSearch", foreign_key: "from_stop_id", dependent: :destroy
   has_many :saved_searches_to, class_name: "SavedSearch", foreign_key: "to_stop_id", dependent: :destroy
 
-  scope :train_stations, -> { where("gtfs_stops.code LIKE '%OCETrain%' OR gtfs_stops.code LIKE '%OCETramTrain%'") }
+  scope :train_stations, -> { where("gtfs_stops.code LIKE '%OCETrain%' OR gtfs_stops.code LIKE '%OCETramTrain%' OR gtfs_stops.code LIKE '%IDFM%'") }
   scope :bus_stops, -> { where("code LIKE '%OCECar%'") }
   scope :within_paris, -> { where(code: STOP_CODES_WITHIN_PARIS) }
 
@@ -43,8 +44,9 @@ class Gtfs::Stop < ApplicationRecord
     name.to_s
   end
 
-  def self.import(filepath)
-    Gtfs::Stop.delete_all
+  def self.import(filepath, append: false)
+    Gtfs::Stop.delete_all unless append
+
     Gtfs::Stop.transaction do
       # stop_id,stop_name,stop_desc,stop_lat,stop_lon,zone_id,stop_url,location_type,parent_station
       CSV.foreach(filepath, headers: true) do |row|

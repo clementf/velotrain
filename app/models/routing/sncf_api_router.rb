@@ -81,11 +81,11 @@ module Routing
 
     def set_from_and_to(from, to)
       if from.is_a?(String) && to.is_a?(String)
-        @from = Gtfs::Stop.train_stations.find_by!(name: from).area_id
-        @to = Gtfs::Stop.train_stations.find_by!(name: to).area_id
+        @from = TrainStation.find_by!(name: from).area_id
+        @to = TrainStation.find_by!(name: to).area_id
       end
 
-      if from.is_a?(Gtfs::Stop) && to.is_a?(Gtfs::Stop)
+      if from.is_a?(TrainStation) && to.is_a?(TrainStation)
         @from = from.area_id
         @to = to.area_id
       end
