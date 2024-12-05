@@ -137,6 +137,10 @@
             <span class="text-gray-500 line-through">Affichage des conditions spécifiques pour chaque region (certaines exigent une réservation pour les vélos, pour certaines periodes)</span>
           </li>
           <li class="flex items-center font-medium">
+            <%= render "completed_item" %>
+            <span class="text-gray-500 line-through">Ajout des données du réseau transilien</span>
+          </li>
+          <li class="flex items-center font-medium">
             <%= render "todo_item" %>
             <span class="text-gray-700">Calcul des itinéraires depuis n'importe quel endroit vers n'importe quel autre endroit (en combinant train et vélo)</span>
           </li>
@@ -151,14 +155,6 @@
           <li class="flex items-center font-medium">
             <%= render "todo_item" %>
             <span class="text-gray-700">Affichage des prix et réservations des trains</span>
-          </li>
-          <li class="flex items-center font-medium">
-            <%= render "todo_item" %>
-            <span class="text-gray-700">Ajout des données du réseau transilien</span>
-          </li>
-          <li class="flex items-center font-medium">
-            <%= render "todo_item" %>
-            <span class="text-gray-700">Ajout des données pour la Corse.</span>
           </li>
         </ul>
 
