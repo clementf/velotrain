@@ -15,6 +15,10 @@
     <%= combobox_style_tag %>
     <%= stylesheet_link_tag "application", "maplibre", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+
+    <% if Rails.env.production? %>
+      <script defer data-domain="velotrain.fr" src="https://plsbl.bluegreen.cc/js/script.js"></script>
+    <% end %>
   </head>
 
   <body class="font-sans antialiased text-gray-800">
