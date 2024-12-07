@@ -33,11 +33,11 @@ Rails.application.routes.draw do
       end
 
       resource :dashboard, only: [:show]
+      resources :areas
+      resources :regional_bike_rules
 
       root to: "dashboard#show"
     end
-    resources :areas
-    resources :regional_bike_rules
   end
 
   # Defines the root path route ("/")
