@@ -50,6 +50,7 @@ export default class extends Controller {
           paint: {
             "fill-color": fillColor || "#088",
             "fill-opacity": 0.5,
+            "fill-opacity-transition": { duration: 150 },
             "fill-antialias": true,
             "fill-outline-color": "#088",
           },
@@ -146,9 +147,9 @@ export default class extends Controller {
     const displayStationRelatedIsochrones = async (e) => {
       const stationCode = e.features[0].properties.code;
 
-      // Hide existing isochrone layers
+      // Fade out existing isochrone layers
       [3600, 1800, 900].forEach(range => {
-        map.setLayoutProperty(`isochrones-${range}`, 'visibility', 'none');
+        map.setPaintProperty(`isochrones-${range}`, 'fill-opacity', 0);
       });
 
       const response = await fetch(`api/train_stations/isochrones?code=${stationCode}`);
@@ -183,31 +184,37 @@ export default class extends Controller {
             source: sourceId,
             paint: {
               'fill-color': color,
-              'fill-opacity': 0.5,
+              'fill-opacity': 0, // Start with 0 opacity
+              'fill-opacity-transition': { duration: 150 }, // Add transition
               'fill-antialias': true,
               "fill-outline-color": "#088",
             }
           }, firstSymbolId);
         }
 
-        if (map.getLayer(layerId)) {
-          map.setLayoutProperty(layerId, 'visibility', 'visible');
-        }
+        // Fade in the layer
+        map.setPaintProperty(layerId, 'fill-opacity', 0.5);
       });
     };
 
     const showAllIsochrones = () => {
-      // Hide station-specific isochrone layers if they exist
+      // Fade out station-specific isochrone layers
       [3600, 1800, 900].forEach(range => {
         const layerId = `station-isochrone-${range}`;
         if (map.getLayer(layerId)) {
-          map.setLayoutProperty(layerId, 'visibility', 'none');
+          map.setPaintProperty(layerId, 'fill-opacity', 0);
         }
       });
 
-      // Show general isochrone layers
+      // Fade in general isochrone layers
       [3600, 1800, 900].forEach(range => {
-        map.setLayoutProperty(`isochrones-${range}`, 'visibility', 'visible');
+        const layerId = `isochrones-${range}`;
+        if (!map.getPaintProperty(layerId, 'fill-opacity-transition')) {
+          map.setPaintProperty(layerId, 'fill-opacity-transition', {
+            duration: 150
+          });
+        }
+        map.setPaintProperty(layerId, 'fill-opacity', 0.5);
       });
     };
 
