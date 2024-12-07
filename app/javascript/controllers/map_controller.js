@@ -82,6 +82,27 @@ export default class extends Controller {
       );
     };
 
+    const addStationLabelLayer = (map, category, minZoom) => {
+      map.addLayer({
+        id: `train_station_labels_${category}`,
+        type: "symbol",
+        source: "train_stations",
+        layout: {
+          "text-field": ["get", "name"],
+          "text-font": ["Noto Sans Medium"],
+          "text-size": 12,
+          "text-anchor": "bottom",
+        },
+        minzoom: minZoom,
+        filter: ["==", ["get", "drg"], category],
+        paint: {
+          "text-color": "#333",
+          "text-halo-color": "rgba(255,255,255,0.5)",
+          "text-halo-width": 1,
+        },
+      });
+    };
+
     const addTrainStations = async () => {
       const response = await fetch("api/train_stations");
       const data = await response.json();
@@ -103,62 +124,9 @@ export default class extends Controller {
         },
       });
 
-      map.addLayer({
-        id: "train_station_labels_A",
-        type: "symbol",
-        source: "train_stations",
-        layout: {
-          "text-field": ["get", "name"],
-          "text-font": ["Noto Sans Medium"],
-          "text-size": 12,
-          "text-anchor": "bottom",
-        },
-        minzoom: 7,
-        filter: ["==", ["get", "drg"], "A"], // Filter to display only features with drg property of "A"
-        paint: {
-          "text-color": "#333",
-          "text-halo-color": "rgba(255,255,255,0.5)",
-          "text-halo-width": 1,
-        },
-      });
-
-      map.addLayer({
-        id: "train_station_labels_B",
-        type: "symbol",
-        source: "train_stations",
-        layout: {
-          "text-field": ["get", "name"],
-          "text-font": ["Noto Sans Medium"],
-          "text-size": 12,
-          "text-anchor": "bottom",
-        },
-        minzoom: 8, // This layer will be visible from zoom level 10 and above
-        filter: ["==", ["get", "drg"], "B"], // Filter to display features with drg property of "A" or "B"
-        paint: {
-          "text-color": "#333",
-          "text-halo-color": "rgba(255,255,255,0.5)",
-          "text-halo-width": 1,
-        },
-      });
-
-      map.addLayer({
-        id: "train_station_labels_C",
-        type: "symbol",
-        source: "train_stations",
-        layout: {
-          "text-field": ["get", "name"],
-          "text-font": ["Noto Sans Medium"],
-          "text-size": 12,
-          "text-anchor": "bottom",
-        },
-        minzoom: 9,
-        filter: ["==", ["get", "drg"], "C"], // Filter to display features with drg property of "A" or "B"
-        paint: {
-          "text-color": "#333",
-          "text-halo-color": "rgba(255,255,255,0.5)",
-          "text-halo-width": 1,
-        },
-      });
+      addStationLabelLayer(map, "A", 7);
+      addStationLabelLayer(map, "B", 8);
+      addStationLabelLayer(map, "C", 9);
 
       // Add click event listener to the train stations layer
       map.on("click", "train_station_labels_A", async function (e) {
@@ -173,46 +141,15 @@ export default class extends Controller {
         //await placeMarker(e);
       });
 
-      async function placeMarker(e) {
-        const coordinates = e.features[0].geometry.coordinates.slice();
 
-        // get station information from api, based on the name
-        let station = await fetch(
-          `api/train_stations/${e.features[0].properties.name}`,
-        );
+      ['A', 'B', 'C'].forEach(category => {
+        map.on("mouseenter", `train_station_labels_${category}`, function () {
+          map.getCanvas().style.cursor = "pointer";
+        });
 
-        if (!station.ok) {
-          return;
-        }
-
-        station = await station.json();
-
-        new maplibregl.Popup()
-          .setLngLat(coordinates)
-          .setHTML(
-            `<h3 class="font-bold">${station.name}</h3>
-            <p class="text-xs my-1">${
-              station.trains_per_day
-            } trains aujourd'hui</p>
-            <ul class="flex flex-wrap gap-1 flex-start">
-            ${station.lines
-              .map(
-                (line) =>
-                  `<li class="py-px px-2 font-medium text-xs rounded" style="background-color: #${line.bg_color}; color: #${line.text_color}">${line.short_name}</li>`,
-              )
-              .join("")}
-            </ul>
-            `,
-          )
-          .addTo(map);
-      }
-
-      map.on("mouseenter", "train_station_labels", function () {
-        map.getCanvas().style.cursor = "pointer";
-      });
-
-      map.on("mouseleave", "train_station_labels", function () {
-        map.getCanvas().style.cursor = "";
+        map.on("mouseleave", `train_station_labels_${category}`, function () {
+          map.getCanvas().style.cursor = "";
+        });
       });
     };
 
