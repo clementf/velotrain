@@ -147,10 +147,6 @@ export default class extends Controller {
     const displayStationRelatedIsochrones = async (e) => {
       const stationCode = e.features[0].properties.code;
 
-      // Fade out existing isochrone layers
-      [3600, 1800, 900].forEach(range => {
-        map.setPaintProperty(`isochrones-${range}`, 'fill-opacity', 0);
-      });
 
       const response = await fetch(`api/train_stations/isochrones?code=${stationCode}`);
       const data = await response.json();
@@ -160,6 +156,11 @@ export default class extends Controller {
         [1800, '#aaf683'],
         [900, '#60d394']
       ];
+
+      // Fade out existing isochrone layers
+      [3600, 1800, 900].forEach(range => {
+        map.setPaintProperty(`isochrones-${range}`, 'fill-opacity', 0);
+      });
 
       rangeColors.forEach(([range, color]) => {
         const sourceId = `station-isochrone-${range}`;
