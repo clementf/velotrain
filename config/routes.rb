@@ -15,6 +15,7 @@ Rails.application.routes.draw do
     resources :train_stations, only: [:index, :show] do
       collection do
         get :search
+        get :isochrones
       end
     end
 

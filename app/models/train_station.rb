@@ -6,6 +6,10 @@ class TrainStation < ApplicationRecord
     Gtfs::Stop.find_by(code: "StopArea:OCE#{uic_code}")
   end
 
+  def isochrones
+    Isochrone.where("ST_DWithin(center, ?, 0.0005)", lonlat) # About 50 meters at the equator
+  end
+
   def lon
     lonlat.x
   end

@@ -47,5 +47,27 @@ module Api
         end
       }
     end
+
+    def isochrones
+      @train_station = TrainStation.find_by(code: params[:code])
+
+      if @train_station.nil?
+        render json: { error: "Train station not found" }, status: :not_found
+        return
+      end
+
+      render json: {
+        type: "FeatureCollection",
+        features: @train_station.isochrones.map do |isochrone|
+          {
+            type: "Feature",
+            geometry: RGeo::GeoJSON.encode(isochrone.geom),
+            properties: {
+              range: isochrone.range
+            }
+          }
+        end
+      }
+    end
   end
 end

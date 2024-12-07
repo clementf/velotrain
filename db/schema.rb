@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_12_05_203453) do
+ActiveRecord::Schema[7.1].define(version: 2024_12_07_124004) do
   create_schema "tiger"
   create_schema "tiger_data"
   create_schema "topology"
@@ -464,7 +464,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_05_203453) do
   create_table "gtfs_stops", force: :cascade do |t|
     t.string "name"
     t.string "code"
-    t.geometry "geom", limit: {:srid=>0, :type=>"st_point"}
+    t.geometry "geom", limit: {:srid=>4326, :type=>"st_point"}
     t.bigint "parent_stop_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -481,8 +481,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_05_203453) do
   end
 
   create_table "isochrones", force: :cascade do |t|
-    t.geometry "geom", limit: {:srid=>0, :type=>"geometry"}
-    t.geometry "center", limit: {:srid=>0, :type=>"st_point"}
+    t.geometry "geom", limit: {:srid=>4326, :type=>"geometry"}
+    t.geometry "center", limit: {:srid=>4326, :type=>"st_point"}
     t.integer "range"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -823,7 +823,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_05_203453) do
 
   create_table "train_lines", force: :cascade do |t|
     t.string "code"
-    t.geometry "geom", limit: {:srid=>0, :type=>"geometry"}
+    t.geometry "geom", limit: {:srid=>4326, :type=>"geometry"}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -831,7 +831,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_05_203453) do
   create_table "train_stations", force: :cascade do |t|
     t.string "name"
     t.string "code"
-    t.geometry "lonlat", limit: {:srid=>0, :type=>"st_point"}
+    t.geometry "lonlat", limit: {:srid=>4326, :type=>"st_point"}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "drg"

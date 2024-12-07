@@ -128,21 +128,11 @@ export default class extends Controller {
       addStationLabelLayer(map, "B", 8);
       addStationLabelLayer(map, "C", 9);
 
-      // Add click event listener to the train stations layer
-      map.on("click", "train_station_labels_A", async function (e) {
-        //await placeMarker(e);
-      });
-
-      map.on("click", "train_station_labels_B", async function (e) {
-        //await placeMarker(e);
-      });
-
-      map.on("click", "train_station_labels_C", async function (e) {
-        //await placeMarker(e);
-      });
-
-
       ['A', 'B', 'C'].forEach(category => {
+        map.on("click", `train_station_labels_${category}`, function (e) {
+          displayStationRelatedIsochrones(e);
+        });
+
         map.on("mouseenter", `train_station_labels_${category}`, function () {
           map.getCanvas().style.cursor = "pointer";
         });
@@ -150,6 +140,74 @@ export default class extends Controller {
         map.on("mouseleave", `train_station_labels_${category}`, function () {
           map.getCanvas().style.cursor = "";
         });
+      });
+    };
+
+    const displayStationRelatedIsochrones = async (e) => {
+      const stationCode = e.features[0].properties.code;
+
+      // Hide existing isochrone layers
+      [3600, 1800, 900].forEach(range => {
+        map.setLayoutProperty(`isochrones-${range}`, 'visibility', 'none');
+      });
+
+      const response = await fetch(`api/train_stations/isochrones?code=${stationCode}`);
+      const data = await response.json();
+
+      const rangeColors = [
+        [3600, '#ffd97d'],
+        [1800, '#aaf683'],
+        [900, '#60d394']
+      ];
+
+      rangeColors.forEach(([range, color]) => {
+        const sourceId = `station-isochrone-${range}`;
+        const layerId = `station-isochrone-${range}`;
+
+        const rangeData = {
+          type: 'FeatureCollection',
+          features: data.features.filter(f => f.properties.range === parseInt(range))
+        };
+
+        if (map.getSource(sourceId)) {
+          map.getSource(sourceId).setData(rangeData);
+        } else {
+          map.addSource(sourceId, {
+            type: 'geojson',
+            data: rangeData
+          });
+
+          map.addLayer({
+            id: layerId,
+            type: 'fill',
+            source: sourceId,
+            paint: {
+              'fill-color': color,
+              'fill-opacity': 0.5,
+              'fill-antialias': true,
+              "fill-outline-color": "#088",
+            }
+          }, firstSymbolId);
+        }
+
+        if (map.getLayer(layerId)) {
+          map.setLayoutProperty(layerId, 'visibility', 'visible');
+        }
+      });
+    };
+
+    const showAllIsochrones = () => {
+      // Hide station-specific isochrone layers if they exist
+      [3600, 1800, 900].forEach(range => {
+        const layerId = `station-isochrone-${range}`;
+        if (map.getLayer(layerId)) {
+          map.setLayoutProperty(layerId, 'visibility', 'none');
+        }
+      });
+
+      // Show general isochrone layers
+      [3600, 1800, 900].forEach(range => {
+        map.setLayoutProperty(`isochrones-${range}`, 'visibility', 'visible');
       });
     };
 
@@ -169,6 +227,18 @@ export default class extends Controller {
 
       addTrainLines();
       addTrainStations();
+
+      // Add click handler for the map
+      map.on('click', (e) => {
+        // Check if the click was on a station label (if so, the station handler will take care of it)
+        const features = map.queryRenderedFeatures(e.point, {
+          layers: ['train_station_labels_A', 'train_station_labels_B', 'train_station_labels_C']
+        });
+
+        if (features.length === 0) {
+          showAllIsochrones();
+        }
+      });
     });
 
     const resetIsochrones = async () => {
