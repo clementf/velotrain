@@ -1,5 +1,15 @@
 require "csv"
 class TrainStation < ApplicationRecord
+
+  UIC_CODES_WITHIN_PARIS = [
+    "87547026", "87547000", # Austerlitz
+    "87686667", # Bercy
+    "87686030", "87686006", # Gare de Lyon
+    "87391011", "87391003", "87391102", # Gare de Montparnasse
+    "87271031", "87271007", "87271023", # Gare du Nord
+    "87113001", # Gare de l'Est
+    "87384008", # Saint-Lazare
+  ]
   attribute :lonlat, :st_point, geographic: true, srid: 4326
 
   def gtfs_stop
@@ -24,6 +34,10 @@ class TrainStation < ApplicationRecord
 
   def area_id
     uic_code
+  end
+
+  def self.is_area_within_paris?(area_id)
+    UIC_CODES_WITHIN_PARIS.include?(area_id)
   end
 
   def self.import(filepath)

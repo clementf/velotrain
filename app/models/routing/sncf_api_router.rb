@@ -182,10 +182,19 @@ module Routing
       datetime = datetime.strftime("%Y%m%dT%H%M%S")
 
       if from.blank?
-        from = "stop_area:SNCF:#{@from}"
+        if TrainStation.is_area_within_paris?(@from)
+          from = "admin:fr:75056"
+        else
+          from = "stop_area:SNCF:#{@from}"
+        end
+
       end
       if to.blank?
-        to = "stop_area:SNCF:#{@to}"
+        if TrainStation.is_area_within_paris?(@to)
+          to = "admin:fr:75056"
+        else
+          to = "stop_area:SNCF:#{@to}"
+        end
       end
 
       "https://api.sncf.com/v1/coverage/sncf/journeys?from=#{from}&to=#{to}&datetime=#{datetime}&#{allowed_ids}&min_nb_journeys=#{min_nb_journeys}&max_nb_journeys=#{max_nb_journeys}&forbidden_uris[]=physical_mode:Coach"
