@@ -22,7 +22,44 @@ module Api
     end
 
     def search
-      @train_stations = TrainStation.where("lower(name) LIKE ?", "%#{params[:q]&.downcase}%").limit(10).order("drg ASC, name ASC")
+      query = params[:q].to_s.downcase
+
+      if query.blank?
+        @train_stations = TrainStation.limit(10).order("drg ASC, name ASC")
+      else
+        # Phase 1: Accent-insensitive exact matching
+        exact_matches = TrainStation.where("unaccent(lower(name)) LIKE unaccent(?)", "%#{query}%")
+                                   .limit(10)
+                                   .order("drg ASC, name ASC")
+
+        # If we have enough exact matches, use them
+        if exact_matches.count >= 2
+          @train_stations = exact_matches
+        else
+          # Phase 2: Combine full-text search and trigram similarity
+          # Prepare query for full-text search
+          query_terms = query.split.map { |term| "#{term}:*" }.join(" & ")
+
+          @train_stations = TrainStation
+            .where("
+              unaccent(lower(name)) LIKE unaccent(?) OR
+              to_tsvector('french', unaccent(lower(name))) @@ to_tsquery('french', unaccent(?)) OR
+              similarity(unaccent(lower(name)), unaccent(?)) > 0.3
+            ", "%#{query}%", query_terms, query)
+            .order(Arel.sql("
+              CASE
+                WHEN unaccent(lower(name)) LIKE unaccent('%#{ActiveRecord::Base.connection.quote_string(query)}%') THEN 0
+                WHEN to_tsvector('french', unaccent(lower(name))) @@ to_tsquery('french', unaccent('#{ActiveRecord::Base.connection.quote_string(query_terms)}')) THEN 1
+                ELSE 2
+              END,
+              similarity(unaccent(lower(name)), unaccent('#{ActiveRecord::Base.connection.quote_string(query)}')) DESC,
+              drg ASC,
+              name ASC
+            "))
+            .limit(10)
+        end
+      end
+
       render turbo_stream: helpers.async_combobox_options(@train_stations)
     end
 
