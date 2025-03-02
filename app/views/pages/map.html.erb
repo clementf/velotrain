@@ -31,8 +31,15 @@
       </div>
 
       <div class="flex items-center justify-between md:block">
-        <div class="flex gap-x-2">
-          <%= form.select :hour, (4..22).step(4).to_a.map { |h| ["#{h}h", h] }, { include_blank: "Heure de départ", selected: params[:hour] }, class: "form-select w-full bg-transparent h-10", input: { required: true } %>
+        <div class="flex flex-col gap-y-2 w-full">
+          <div class="flex gap-x-2">
+            <div class="w-1/2">
+              <%= form.date_field :date, value: params[:date] || Date.current.to_s, class: "form-input w-full bg-transparent h-10", min: Date.current.to_s, max: (Date.current + 2.months).to_s %>
+            </div>
+            <div class="w-1/2">
+              <%= form.select :hour, (4..22).step(2).to_a.map { |h| ["#{h}h", h] }, { include_blank: "Heure de départ", selected: params[:hour] }, class: "form-select w-full bg-transparent h-10", input: { required: true } %>
+            </div>
+          </div>
         </div>
 
         <div class="">
@@ -91,8 +98,8 @@
                               <p class="mt-1 text-gray-500"><%= rule[:extracted_information].truncate(100) %></p>
                             <% end %>
                             <% if rule[:source_url].present? %>
-                              <%= link_to "Plus d'informations", rule[:source_url], 
-                                  class: "text-accent-dark font-medium hover:underline", 
+                              <%= link_to "Plus d'informations", rule[:source_url],
+                                  class: "text-accent-dark font-medium hover:underline",
                                   target: "_blank",
                                   rel: "noopener noreferrer" %>
                             <% end %>
