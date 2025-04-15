@@ -229,6 +229,8 @@ export default class extends Controller {
         }
       }
 
+      addAttribution();
+
       await addIsochrone(3600, "#ffd97d");
       await addIsochrone(1800, "#aaf683");
       await addIsochrone(900, "#60d394");
@@ -318,5 +320,24 @@ export default class extends Controller {
 
       zoomLevel = map.getZoom();
     });
+
+    const addAttribution = () => {
+      map.addSource('attribution', {
+        type: 'geojson',
+        data: {
+          type: 'FeatureCollection',
+          features: []
+        },
+        attribution: 'Les collectivités contributrices de l’Observatoire national des véloroutes, <a href="https://reseau-velo-marche.org/">Réseau vélo et marche</a>'
+      });
+
+      map.addLayer({
+        id: 'attribution',
+        type: 'symbol',
+        source: 'attribution',
+        layout: {
+        },
+      });
+    }
   }
 }
