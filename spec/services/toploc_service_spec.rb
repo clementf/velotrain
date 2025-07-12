@@ -2,6 +2,7 @@ require 'rails_helper'
 
 RSpec.describe ToplocService do
   let(:service) { described_class.new }
+  let(:updated_since) { 1.day.ago }
   let(:sample_listing) do
     {
       "id" => "1951",
@@ -34,14 +35,16 @@ RSpec.describe ToplocService do
   describe '#fetch_and_sync_accommodations' do
     context 'when API returns data' do
       before do
-        stub_request(:get, "#{described_class::BASE_URL}?page=1&per_page=100")
+        stub_request(:get, described_class::BASE_URL)
+          .with(query: hash_including(page: '1', per_page: '100'))
           .to_return(
             status: 200,
             body: { data: [sample_listing] }.to_json,
             headers: { 'Content-Type' => 'application/json' }
           )
         
-        stub_request(:get, "#{described_class::BASE_URL}?page=2&per_page=100")
+        stub_request(:get, described_class::BASE_URL)
+          .with(query: hash_including(page: '2', per_page: '100'))
           .to_return(
             status: 200,
             body: { data: [] }.to_json,
@@ -75,7 +78,8 @@ RSpec.describe ToplocService do
 
     context 'when API returns no data' do
       before do
-        stub_request(:get, "#{described_class::BASE_URL}?page=1&per_page=100")
+        stub_request(:get, described_class::BASE_URL)
+          .with(query: hash_including(page: '1', per_page: '100'))
           .to_return(
             status: 200,
             body: { data: [] }.to_json,
@@ -91,7 +95,8 @@ RSpec.describe ToplocService do
 
     context 'when API returns error' do
       before do
-        stub_request(:get, "#{described_class::BASE_URL}?page=1&per_page=100")
+        stub_request(:get, described_class::BASE_URL)
+          .with(query: hash_including(page: '1', per_page: '100'))
           .to_return(status: 500, body: 'Internal Server Error')
       end
 
@@ -105,7 +110,8 @@ RSpec.describe ToplocService do
 
     context 'when API times out' do
       before do
-        stub_request(:get, "#{described_class::BASE_URL}?page=1&per_page=100")
+        stub_request(:get, described_class::BASE_URL)
+          .with(query: hash_including(page: '1', per_page: '100'))
           .to_timeout
       end
 
@@ -121,7 +127,8 @@ RSpec.describe ToplocService do
   describe 'pagination handling' do
     it 'fetches multiple pages until empty page' do
       # First page with full results
-      stub_request(:get, "#{described_class::BASE_URL}?page=1&per_page=100")
+      stub_request(:get, described_class::BASE_URL)
+        .with(query: hash_including(page: '1', per_page: '100'))
         .to_return(
           status: 200,
           body: { data: Array.new(100) { sample_listing } }.to_json,
@@ -129,7 +136,8 @@ RSpec.describe ToplocService do
         )
 
       # Second page with partial results (less than 100, so it should stop)
-      stub_request(:get, "#{described_class::BASE_URL}?page=2&per_page=100")
+      stub_request(:get, described_class::BASE_URL)
+        .with(query: hash_including(page: '2', per_page: '100'))
         .to_return(
           status: 200,
           body: { data: Array.new(25) { sample_listing } }.to_json,
@@ -160,14 +168,16 @@ RSpec.describe ToplocService do
     end
 
     before do
-      stub_request(:get, "#{described_class::BASE_URL}?page=1&per_page=100")
+      stub_request(:get, described_class::BASE_URL)
+        .with(query: hash_including(page: '1', per_page: '100'))
         .to_return(
           status: 200,
           body: { data: [sample_listing, invalid_listing] }.to_json,
           headers: { 'Content-Type' => 'application/json' }
         )
       
-      stub_request(:get, "#{described_class::BASE_URL}?page=2&per_page=100")
+      stub_request(:get, described_class::BASE_URL)
+        .with(query: hash_including(page: '2', per_page: '100'))
         .to_return(
           status: 200,
           body: { data: [] }.to_json,
@@ -219,14 +229,16 @@ RSpec.describe ToplocService do
       end
 
       before do
-        stub_request(:get, "#{described_class::BASE_URL}?page=1&per_page=100")
+        stub_request(:get, described_class::BASE_URL)
+          .with(query: hash_including(page: '1', per_page: '100'))
           .to_return(
             status: 200,
             body: { data: [listing_no_price] }.to_json,
             headers: { 'Content-Type' => 'application/json' }
           )
         
-        stub_request(:get, "#{described_class::BASE_URL}?page=2&per_page=100")
+        stub_request(:get, described_class::BASE_URL)
+          .with(query: hash_including(page: '2', per_page: '100'))
           .to_return(
             status: 200,
             body: { data: [] }.to_json,
@@ -252,14 +264,16 @@ RSpec.describe ToplocService do
       end
 
       before do
-        stub_request(:get, "#{described_class::BASE_URL}?page=1&per_page=100")
+        stub_request(:get, described_class::BASE_URL)
+          .with(query: hash_including(page: '1', per_page: '100'))
           .to_return(
             status: 200,
             body: { data: [listing_no_images] }.to_json,
             headers: { 'Content-Type' => 'application/json' }
           )
         
-        stub_request(:get, "#{described_class::BASE_URL}?page=2&per_page=100")
+        stub_request(:get, described_class::BASE_URL)
+          .with(query: hash_including(page: '2', per_page: '100'))
           .to_return(
             status: 200,
             body: { data: [] }.to_json,

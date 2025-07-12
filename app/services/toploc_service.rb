@@ -11,12 +11,12 @@ class ToplocService
     @http_client = HTTP.timeout(30)
   end
 
-  def fetch_and_sync_accommodations(limit: nil)
+  def fetch_and_sync_accommodations(limit: nil, updated_since: 1.day.ago)
     total_synced = 0
     page = 1
 
     loop do
-      listings_data = fetch_listings_page(page)
+      listings_data = fetch_listings_page(page, updated_since)
       break if listings_data.blank?
 
       accommodations_data = transform_listings_to_accommodations(listings_data)
@@ -35,13 +35,20 @@ class ToplocService
 
   private
 
-  def fetch_listings_page(page)
+  def fetch_listings_page(page, updated_since)
     headers = {
       'Accept' => 'application/json',
       'Content-Type' => 'application/json',
       'Authorization' => "#{Rails.application.credentials.toploc_api_key}"
     }
-    response = @http_client.get(BASE_URL, params: { page: page, per_page: LISTINGS_PER_PAGE }, headers: headers)
+    response = @http_client.get(
+      BASE_URL,
+      params: {
+        page: page,
+        per_page: LISTINGS_PER_PAGE,
+        updated_since: updated_since.to_i
+      },
+      headers: headers)
 
     unless response.status.success?
       Rails.logger.error "Toploc API request failed for page #{page}: #{response.status} - #{response.body}"
