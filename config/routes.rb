@@ -22,6 +22,7 @@ Rails.application.routes.draw do
     resources :trips, only: [:index, :show]
     resources :train_lines, only: [:index]
     resources :isochrones, only: [:index]
+    resources :accommodations, only: [:index, :show]
   end
 
   namespace :admin do

@@ -3,3 +3,11 @@
   background-color: #f8f2ee;
   background-image: url("topography.svg");
 }
+
+.mapboxgl-popup-content, .maplibregl-popup-content {
+  padding: 0 !important;
+}
+
+.mapboxgl-popup-content, .maplibregl-popup-content {
+  border-radius: 1rem !important;
+}

@@ -1,0 +1,7 @@
+production:
+  - job: AccommodationSyncJob
+    cron: "0 6 * * *" # Daily at 6 AM
+
+development:
+  - job: AccommodationSyncJob
+    cron: "0 6 * * *" # Daily at 6 AM

@@ -12,28 +12,109 @@
       </div>
     </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  <div class="p-4 bg-white rounded-lg shadow">
+    <h2 class="mb-4 text-lg font-medium text-center text-gray-700">Most Searched Train Routes</h2>
+
+    <div class="overflow-x-auto">
+      <table class="min-w-full bg-white border border-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">From Station</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">To Station</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Search Count</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Searched</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+          <% SavedSearch.joins("JOIN gtfs_stops from_stops ON saved_searches.from_stop_id = from_stops.id")
+                        .joins("JOIN gtfs_stops to_stops ON saved_searches.to_stop_id = to_stops.id")
+                        .group(:from_stop_id, :to_stop_id, 'from_stops.name', 'to_stops.name')
+                        .select('from_stop_id, to_stop_id, from_stops.name as from_name, to_stops.name as to_name, COUNT(*) as search_count, MAX(saved_searches.created_at) as last_searched')
+                        .order('search_count DESC, last_searched DESC')
+                        .limit(15).each do |route| %>
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm font-medium text-gray-900"><%= route.from_name %></div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm font-medium text-gray-900"><%= route.to_name %></div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                  <%= route.search_count %> searches
+                </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <%= time_ago_in_words(route.last_searched) %> ago
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="mt-8">
     <div class="p-4 bg-white rounded-lg shadow">
-      <h2 class="mb-4 text-lg font-medium text-center text-gray-700">Top 5 Most Searched Starting Train Stations</h2>
-      <div class="">
-        <%= pie_chart SavedSearch.all.group(:from_stop_id).count
-                          .sort_by { |_, v| -v }
-                          .first(5)
-                          .map { |k, v| [Gtfs::Stop.find(k).name, v] }
-                          .to_h, id: "top-starting-stations-chart" %>
+      <h2 class="mb-4 text-lg font-medium text-center text-gray-700">Accommodation Outbound Clicks</h2>
+
+      <div class="grid grid-cols-1 gap-6 mb-6">
+        <div>
+          <h3 class="mb-2 text-base font-medium text-gray-600">Clicks Over Time (Last 30 Days)</h3>
+          <%= line_chart OutboundClick.where(created_at: 30.days.ago..Time.current)
+                                      .group_by_day(:created_at)
+                                      .count,
+                         id: "outbound-clicks-chart" %>
+        </div>
+
+      </div>
+
+      <div class="overflow-x-auto">
+        <h3 class="mb-4 text-base font-medium text-gray-600">Recent Accommodation Clicks</h3>
+        <table class="min-w-full bg-white border border-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Accommodation</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">City</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Source</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Clicks</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Clicked</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            <% OutboundClick.joins(:accommodation)
+                           .group('accommodations.id, accommodations.name, accommodations.city, accommodations.source, accommodations.price')
+                           .select('accommodations.*, COUNT(outbound_clicks.id) as click_count, MAX(outbound_clicks.created_at) as last_clicked')
+                           .order('last_clicked DESC')
+                           .limit(10).each do |accommodation| %>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900"><%= accommodation.name %></div>
+                  <div class="text-sm text-gray-500"><%= accommodation.accommodation_type %></div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <%= accommodation.city %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                    <%= accommodation.source.capitalize %>
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <%= accommodation.price ? "€#{accommodation.price}" : 'N/A' %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <%= accommodation.click_count %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <%= time_ago_in_words(accommodation.last_clicked) %> ago
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
       </div>
     </div>
-
-    <div class="p-4 bg-white rounded-lg shadow">
-      <h2 class="mb-4 text-lg font-medium text-center text-gray-700">Top 5 Most Searched Ending Train Stations</h2>
-      <div class="">
-        <%= pie_chart SavedSearch.all.group(:to_stop_id).count
-                          .sort_by { |_, v| -v }
-                          .first(5)
-                          .map { |k, v| [Gtfs::Stop.find(k).name, v] }
-                          .to_h, id: "top-ending-stations-chart" %>
-      </div>
-    </div>
-
   </div>
 </div>

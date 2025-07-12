@@ -304,9 +304,103 @@ export default class extends Controller {
       map.removeSource("paths");
     });
 
+    const fetchAccommodations = async () => {
+      const bounds = map.getBounds().toArray().flat().join(",");
+      const response = await fetch(`api/accommodations?bounds=${bounds}`);
+      return await response.json();
+    };
+
+    const addAccommodations = async () => {
+      let data = await fetchAccommodations();
+
+      map.addSource("accommodations", {
+        type: "geojson",
+        data: data,
+      });
+
+      map.addLayer(
+        {
+          id: "accommodations",
+          type: "circle",
+          source: "accommodations",
+          paint: {
+            "circle-color": "#E66A5F",
+            "circle-radius": 4,
+            "circle-opacity": 1,
+            "circle-stroke-width": 1,
+            "circle-stroke-color": "#ffffff",
+            "circle-stroke-opacity": 0.8,
+          },
+        },
+        firstSymbolId,
+      );
+
+      map.on("click", "accommodations", (e) => {
+        e.preventDefault();
+        const properties = e.features[0].properties;
+        const coordinates = e.features[0].geometry.coordinates.slice();
+        const images = JSON.parse(properties.images || '[]');
+        const firstImage = images.length > 0 ? images[0] : null;
+
+        new maplibregl.Popup({
+          className: 'accommodation-popup',
+          maxWidth: '288px',
+          closeButton: false,
+        })
+          .setLngLat(coordinates)
+          .setHTML(`
+            <div class="rounded-2xl w-72 bg-white shadow-lg font-body overflow-hidden">
+              ${properties.url ? `<a target="_blank" href="/api/accommodations/${properties.id}">` : '<div>'}
+                ${firstImage ? `<img class="h-44 w-full object-cover" src="${firstImage}" alt="${properties.name}">` : '<div class="h-44 w-full bg-gray-200 flex items-center justify-center"><span class="text-gray-400">Pas d\'image</span></div>'}
+                <div class="px-3 py-3 text-left">
+                  <div class="flex items-center justify-between">
+                    <div class="font-semibold text-sm text-gray-600">
+                      ${properties.city || ''}
+                    </div>
+                    <div class="inline-block px-2 py-0.5 rounded-full bg-gray-100 font-medium text-xs text-[#006B52]">${properties.source.charAt(0).toUpperCase() + properties.source.slice(1)}</div>
+                  </div>
+                  ${properties.price ? `
+                    <div class="font-medium my-1 text-xs text-gray-600">
+                      Dès <span class="font-bold">${properties.price} €</span> / nuit
+                    </div>
+                  ` : ''}
+                </div>
+              ${properties.url ? '</a>' : '</div>'}
+            </div>
+          `)
+          .addTo(map);
+      });
+
+      map.on("mouseenter", "accommodations", () => {
+        map.getCanvas().style.cursor = "pointer";
+      });
+
+      map.on("mouseleave", "accommodations", () => {
+        map.getCanvas().style.cursor = "";
+      });
+    };
+
+    const resetAccommodations = async () => {
+      if (!map.getSource("accommodations")) {
+        return;
+      }
+
+      map.getSource("accommodations").setData(await fetchAccommodations());
+    };
+
+    document.addEventListener("enabled-filter:accommodations", async () => {
+      addAccommodations();
+    });
+
+    document.addEventListener("disabled-filter:accommodations", async () => {
+      map.removeLayer("accommodations");
+      map.removeSource("accommodations");
+    });
+
 
     map.on("moveend", async () => {
       resetPaths();
+      resetAccommodations();
     });
 
     map.on("zoomend", async () => {

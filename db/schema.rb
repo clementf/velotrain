@@ -10,11 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_03_02_093749) do
   create_schema "tiger"
   create_schema "tiger_data"
   create_schema "topology"
 
+ActiveRecord::Schema[7.1].define(version: 2025_07_12_154250) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "fuzzystrmatch"
   enable_extension "pg_trgm"
@@ -23,6 +23,23 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_02_093749) do
   enable_extension "postgis_tiger_geocoder"
   enable_extension "postgis_topology"
   enable_extension "unaccent"
+
+  create_table "accommodations", force: :cascade do |t|
+    t.string "accommodation_type"
+    t.string "source"
+    t.geometry "coordinates", limit: {:srid=>4326, :type=>"st_point"}
+    t.string "name"
+    t.string "city"
+    t.string "zip_code"
+    t.decimal "price", precision: 10, scale: 2
+    t.string "url"
+    t.string "external_id"
+    t.text "images"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["coordinates"], name: "index_accommodations_on_coordinates", using: :gist
+    t.index ["source", "external_id"], name: "index_accommodations_on_source_and_external_id", unique: true
+  end
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -580,6 +597,11 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_02_093749) do
     t.string "name", limit: 90
     t.index "soundex((name)::text)", name: "place_lookup_name_idx"
     t.index ["state"], name: "place_lookup_state_idx"
+  create_table "outbound_clicks", force: :cascade do |t|
+    t.bigint "accommodation_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["accommodation_id"], name: "index_outbound_clicks_on_accommodation_id"
   end
 
   create_table "regional_bike_rules", force: :cascade do |t|
@@ -926,6 +948,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_02_093749) do
   add_foreign_key "gtfs_stop_times", "gtfs_trips"
   add_foreign_key "gtfs_stops", "gtfs_stops", column: "parent_stop_id"
   add_foreign_key "gtfs_trips", "gtfs_routes"
+  add_foreign_key "outbound_clicks", "accommodations"
   add_foreign_key "regional_bike_rules", "areas"
   add_foreign_key "saved_searches", "gtfs_stops", column: "from_stop_id"
   add_foreign_key "saved_searches", "gtfs_stops", column: "to_stop_id"
