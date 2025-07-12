@@ -37,7 +37,7 @@
               <%= form.date_field :date, value: params[:date] || Date.current.to_s, class: "form-input w-full bg-transparent h-10", min: Date.current.to_s, max: (Date.current + 2.months).to_s %>
             </div>
             <div class="w-1/2">
-              <%= form.select :hour, (4..22).step(2).to_a.map { |h| ["#{h}h", h] }, { include_blank: "Heure de départ", selected: params[:hour] }, class: "form-select w-full bg-transparent h-10", input: { required: true } %>
+              <%= form.select :hour, (4..22).to_a.map { |h| ["#{h}h", h] }, { include_blank: "Heure de départ", selected: params[:hour] }, class: "form-select w-full bg-transparent h-10", input: { required: true } %>
             </div>
           </div>
         </div>
