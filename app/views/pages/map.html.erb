@@ -1,20 +1,18 @@
-<script>
-  const toggleResults = () => {
-    const searchContainer = document.getElementById('search-container')
-    let offset = window.innerHeight - 240
-    searchContainer.style.transform = searchContainer.style.transform === 'translateY(0px)' ? `translateY(${offset}px)` : 'translateY(0px)'
-    searchContainer.querySelector('.up').classList.toggle('hidden')
-    searchContainer.querySelector('.down').classList.toggle('hidden')
-  }
-</script>
 <div class="">
-  <div class="absolute md:max-w-96 z-20 h-[100dvh] md:h-auto w-full px-8 pb-4 pt-2 md:pt-4 shadow-lg transition-transform md:rounded-lg bg-white/80 md:translate-y-0 translate-y-[calc(100dvh_-_240px)] md:w-auto backdrop-blur-sm md:top-4 md:left-4" id="search-container">
-    <button class="absolute p-2 mx-auto border border-gray-300 rounded-full shadow md:hidden up left-1/2 -translate-x-1/2 -top-5 full bg-gray-50" onclick="toggleResults()">
+  <div class="fixed md:max-w-96 z-20 h-[100dvh] md:h-auto w-full px-8 pb-4 pt-2 md:pt-4 shadow-lg transition-transform duration-300 ease-out md:rounded-lg bg-white/80 md:translate-y-0 translate-y-[calc(100dvh_-_60px)] md:w-auto backdrop-blur-sm md:top-4 md:left-4" id="search-container" data-controller="mobile-search" data-mobile-search-target="container">
+    <button class="absolute p-2 mx-auto border border-gray-300 rounded-full shadow md:hidden up left-1/2 -translate-x-1/2 -top-5 full bg-gray-50 drag-handle transition-all duration-200 hover:bg-gray-100 active:scale-95" data-mobile-search-target="upButton" data-action="click->mobile-search#toggle">
       <%= heroicon "chevron-up", class: "w-4 h-4 text-gray-500 mx-auto" %>
     </button>
-    <button class="absolute hidden p-2 mx-auto border border-gray-300 rounded-full shadow md:hidden down left-1/2 -translate-x-1/2 -top-2 full bg-gray-50" onclick="toggleResults()">
+    <button class="absolute hidden p-2 mx-auto border border-gray-300 rounded-full shadow md:hidden down left-1/2 -translate-x-1/2 -top-2 full bg-gray-50 drag-handle transition-all duration-200 hover:bg-gray-100 active:scale-95" data-mobile-search-target="downButton" data-action="click->mobile-search#toggle">
       <%= heroicon "chevron-down", class: "w-4 h-4 text-gray-500 mx-auto" %>
     </button>
+
+    <!-- Drag handle indicator and area -->
+    <div class="absolute top-0 left-0 right-0 h-8 md:hidden drag-handle flex items-center justify-center">
+    </div>
+
+    <!-- Add padding to avoid content overlap with drag handle -->
+    <div class="pt-4 md:pt-0">
       <%= form_with method: :get, url: "/map", data: { turbo_frame: 'trip-results', turbo_action: "advance", controller: "search-form" }  do |form| %>
         <div class="flex items-center gap-x-2">
           <div class="relative w-full">
@@ -30,11 +28,11 @@
           </div>
       </div>
 
-      <div class="flex items-center justify-between md:block">
+      <div class="">
         <div class="flex flex-col gap-y-2 w-full">
           <div class="flex gap-x-2">
             <div class="w-1/2">
-              <%= form.date_field :date, value: params[:date] || Date.current.to_s, class: "form-input w-full bg-transparent h-10", min: Date.current.to_s, max: (Date.current + 2.months).to_s %>
+              <%= form.date_field :date, value: params[:date] || Date.current.to_s, class: "form-select w-full bg-transparent h-10", min: Date.current.to_s, max: (Date.current + 2.months).to_s %>
             </div>
             <div class="w-1/2">
               <%= form.select :hour, (4..22).to_a.map { |h| ["#{h}h", h] }, { include_blank: "Heure de départ", selected: params[:hour] }, class: "form-select w-full bg-transparent h-10", input: { required: true } %>
@@ -42,12 +40,12 @@
           </div>
         </div>
 
-        <div class="">
+        <div class="mt-2">
           <%= form.submit "Rechercher", class: "btn-primary text-sm w-full md:mt-4", data: { turbo_submits_with: "..." } %>
         </div>
       </div>
       <turbo-frame id="trip-results">
-        <div class="my-2 max-h-[calc(100vh-24rem)] overflow-y-auto" data-controller="trip-results">
+        <div class="my-2 max-h-[calc(100vh-24rem)] overflow-y-auto overflow-x-hidden" data-controller="trip-results" data-mobile-search-target="resultsContainer">
 
           <% if @results.empty? && @from.present? && @to.present? %>
             <div class="h-32 text-center mt-4 text-gray-500">
@@ -153,6 +151,8 @@
 
       </turbo-frame>
     <% end %>
+    </div> <!-- Close pt-4 div -->
+
     <section class="text-xs font-medium text-gray-500" data-controller="map-filters">
       <div class="flex items-center justify-between mt-1">
         <span class="flex flex-col flex-grow">

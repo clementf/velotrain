@@ -325,7 +325,7 @@ export default class extends Controller {
           source: "accommodations",
           paint: {
             "circle-color": "#E66A5F",
-            "circle-radius": 4,
+            "circle-radius": 5,
             "circle-opacity": 1,
             "circle-stroke-width": 1,
             "circle-stroke-color": "#ffffff",
