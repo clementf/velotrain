@@ -1,4 +1,4 @@
-<div class="">
+<div class="" data-controller="sncf-booking">
   <div class="fixed md:max-w-96 z-20 h-[100dvh] md:h-auto w-full px-8 pb-4 pt-2 md:pt-4 shadow-lg transition-transform duration-300 ease-out md:rounded-lg bg-white/80 md:translate-y-0 translate-y-[calc(100dvh_-_60px)] md:w-auto backdrop-blur-sm md:top-4 md:left-4" id="search-container" data-controller="mobile-search" data-mobile-search-target="container">
     <button class="absolute p-2 mx-auto border border-gray-300 rounded-full shadow md:hidden up left-1/2 -translate-x-1/2 -top-5 full bg-gray-50 drag-handle transition-all duration-200 hover:bg-gray-100 active:scale-95" data-mobile-search-target="upButton" data-action="click->mobile-search#toggle">
       <%= heroicon "chevron-up", class: "w-4 h-4 text-gray-500 mx-auto" %>
@@ -43,6 +43,7 @@
         <div class="mt-2">
           <%= form.submit "Rechercher", class: "btn-primary text-sm w-full md:mt-4", data: { turbo_submits_with: "..." } %>
         </div>
+
       </div>
       <turbo-frame id="trip-results">
         <div class="my-2 max-h-[calc(100vh-24rem)] overflow-y-auto overflow-x-hidden" data-controller="trip-results" data-mobile-search-target="resultsContainer">
@@ -79,8 +80,20 @@
 
                 <div class="py-6 ml-[49px] -my-4 border-l-4 border-accent/80" data-controller="trip-segment">
 
-                  <div class="px-2 inline-block ml-4 py-px font-medium text-center text-[11px] text-gray-800 bg-accent-light rounded-full">
-                    <%= section[:commercial_mode] %>
+                  <div class="flex items-center justify-between ml-4">
+                    <div class="px-2 inline-block py-px font-medium text-center text-[11px] text-gray-800 bg-accent-light rounded-full">
+                      <%= section[:commercial_mode] %>
+                    </div>
+                    <button
+                      class="text-xs font-bold text-dark px-2 py-1 transition-colors"
+                      data-action="click->sncf-booking#openModal"
+                      data-origin="<%= section[:from] %>"
+                      data-destination="<%= section[:to] %>"
+                      data-date="<%= (params[:date] || Date.current.to_s).to_date.strftime('%d/%m/%Y') %>"
+                      data-time="<%= section[:departure_time]&.strftime('%H') if section[:departure_time].respond_to?(:strftime) %>"
+                    >
+                      Réserver
+                    </button>
                   </div>
 
                   <% if section[:bike_rules].present? %>
@@ -194,6 +207,9 @@
   <div id="map" class="w-screen h-screen" data-controller="map gpx-tracks">
 
   </div>
+
+  <!-- Include SNCF Booking Modal -->
+  <%= render 'shared/sncf_booking_modal' %>
 </div>
 
 <script>

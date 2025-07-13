@@ -1,0 +1,25 @@
+<!-- SNCF Booking Modal -->
+<div
+  class="fixed inset-0 z-50 hidden overflow-y-auto duration-100"
+  data-sncf-booking-target="modal"
+  data-action="click->sncf-booking#handleBackdropClick keydown@window->sncf-booking#handleKeydown"
+  aria-labelledby="sncf-booking-title"
+  role="dialog"
+  aria-modal="true"
+>
+  <!-- Background overlay -->
+  <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity duration-100"></div>
+
+  <!-- Modal panel -->
+  <div class="flex min-h-full items-center justify-center p-4">
+    <div class="relative w-full max-w-4xl max-h-[90vh] shadow-xl overflow-hidden">
+      <!-- Modal content -->
+      <div class="p-0 overflow-y-auto max-h-[calc(90vh-120px)]">
+        <!-- Widget container -->
+        <div data-sncf-booking-target="widget" class="w-full min-h-[400px]">
+          <!-- Widget will be injected here -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
