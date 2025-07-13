@@ -4,6 +4,9 @@ service: velotrain
 # Name of the container image.
 image: clementf/velotrain
 
+aliases:
+  console: app exec --reuse -i "bin/rails console"
+
 # Deploy to these servers.
 servers:
   web:
