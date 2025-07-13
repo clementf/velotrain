@@ -33,6 +33,7 @@ gem "groupdate"
 gem "chartkick"
 
 gem "clearance"
+gem "pagy"
 
 # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
 gem "turbo-rails"

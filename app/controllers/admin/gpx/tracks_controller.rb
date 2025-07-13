@@ -1,9 +1,11 @@
 class Admin::Gpx::TracksController < ApplicationController
+  include Pagy::Backend
+  
   before_action :set_gpx_track, only: %i[show edit update destroy]
 
   # GET /gpx/tracks or /gpx/tracks.json
   def index
-    @gpx_tracks = Gpx::Track.all.order(created_at: :desc)
+    @pagy, @gpx_tracks = pagy(Gpx::Track.all.order(created_at: :desc), items: 20)
   end
 
   # GET /gpx/tracks/1 or /gpx/tracks/1.json
