@@ -249,6 +249,16 @@ export default class extends Controller {
           showAllIsochrones();
         }
       });
+
+      // Dispatch map-ready event for other controllers with a small delay
+      // to ensure all layers are fully processed
+      setTimeout(() => {
+        if (map && map.loaded()) {
+          document.dispatchEvent(new CustomEvent('map:ready', {
+            detail: { map: map }
+          }));
+        }
+      }, 100);
     });
 
     const resetIsochrones = async () => {
@@ -273,6 +283,22 @@ export default class extends Controller {
         data: data,
       });
 
+      // Add invisible wider layer for click detection
+      map.addLayer(
+        {
+          id: "paths-clickable",
+          type: "line",
+          source: "paths",
+          paint: {
+            "line-color": "rgba(0,0,0,0)", // Transparent
+            "line-width": 12, // Much wider for easier clicking
+            "line-opacity": 0,
+          },
+        },
+        firstSymbolId,
+      );
+
+      // Add visible layer on top
       map.addLayer(
         {
           id: "paths",
@@ -296,11 +322,14 @@ export default class extends Controller {
     };
 
     document.addEventListener("enabled-filter:tracks", async () => {
-      addPaths();
+      await addPaths();
+      // Dispatch event for GPX tracks controller to set up interactions
+      document.dispatchEvent(new CustomEvent("gpx-tracks:paths-loaded"));
     });
 
     document.addEventListener("disabled-filter:tracks", async () => {
       map.removeLayer("paths");
+      map.removeLayer("paths-clickable");
       map.removeSource("paths");
     });
 

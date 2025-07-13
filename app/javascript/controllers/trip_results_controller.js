@@ -3,37 +3,48 @@ import maplibregl from "maplibre-gl";
 
 export default class extends Controller {
   connect() {
+    // Only initialize if there are trip elements on the page
+    if (document.querySelectorAll('.trip').length === 0) {
+      return;
+    }
+
     if (window.section_layers === undefined) {
       window.section_layers = [];
     }
 
-    if(window.map.loaded()) {
+    this.mapReadyHandler = this.handleMapReady.bind(this);
+    
+    // Listen for map ready event
+    document.addEventListener("map:ready", this.mapReadyHandler);
+    
+    // Check if map is already ready
+    if (window.map && window.map.loaded()) {
       this.setupObserver();
     }
-    else {
-      // Wait for the map to load. Can't use load event b/c it's only fired once
-      // Similar to issue described here: https://github.com/mapbox/mapbox-gl-js/issues/6707
-      window.setTimeout(() => {
-        if(window.map.loaded()) {
-          this.setupObserver();
-        }
-      }, 200);
-    }
+  }
 
-    // Still need to check if the map is loaded when the load event is fired
-    window.map.on('load', () => {
-      this.setupObserver();
-    });
+  handleMapReady(event) {
+    this.setupObserver();
   }
 
   disconnect() {
+    // Remove event listener
+    document.removeEventListener("map:ready", this.mapReadyHandler);
     this.removeLayers();
   }
 
   setupObserver() {
-    let targets = document.querySelectorAll('.trip');
+    // Ensure map is available
+    if (!window.map) {
+      return;
+    }
 
-    this.showSection(targets[0]);
+    let targets = document.querySelectorAll('.trip');
+    
+    // Show first section if it exists
+    if (targets[0]) {
+      this.showSection(targets[0]);
+    }
 
     targets.forEach(target => {
       target.addEventListener('mouseenter', (event) => {
@@ -43,17 +54,42 @@ export default class extends Controller {
   }
 
   showSection(target) {
+    // Defensive programming - ensure target exists and has the required method
+    if (!target || typeof target.querySelectorAll !== 'function') {
+      return;
+    }
+
+    // Ensure map is available
+    if (!window.map) {
+      return;
+    }
+
     let idx = 0;
 
     this.removeLayers();
     window.section_layers = [];
 
     let bounds = new maplibregl.LngLatBounds();
+    let sections = target.querySelectorAll('.section');
+    
+    // Check if any sections exist
+    if (sections.length === 0) {
+      return;
+    }
 
-    target.querySelectorAll('.section').forEach((section) => {
-      JSON.parse(section.dataset.geoJson).coordinates.forEach((coord) => {
-        bounds.extend(coord);
-      });
+    sections.forEach((section) => {
+      try {
+        if (section.dataset.geoJson) {
+          const geoData = JSON.parse(section.dataset.geoJson);
+          if (geoData.coordinates) {
+            geoData.coordinates.forEach((coord) => {
+              bounds.extend(coord);
+            });
+          }
+        }
+      } catch (error) {
+        // Silently fail on parsing errors
+      }
     });
 
     let paddingLeft = document.body.clientWidth > 768 ? document.querySelector('#search-container').offsetWidth + 50 : 50;

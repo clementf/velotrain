@@ -6,10 +6,16 @@ module Api
       render json: {
         type: "FeatureCollection",
         features: gpx_segments.map do |segment|
+          track = segment.track
+          total_distance = track.distance_km
+          
           {
             type: "Feature",
             properties: {
-              name: segment.track.name,
+              track_id: segment.gpx_track_id,
+              name: track.name,
+              distance_km: total_distance.round(1),
+              segment_id: segment.id,
               status: segment.status
             },
             geometry: JSON.parse(segment.geom_json)
@@ -27,7 +33,7 @@ module Api
         segments = Gpx::Segment
           .includes(:track)
           .joins(:track)
-          .select("gpx_segments.id, gpx_track_id, status, ST_AsGeoJSON(ST_Simplify(#{intersection_clause}, #{simplification_factor})) AS geom_json")
+          .select("gpx_segments.id, gpx_track_id, status, gpx_tracks.name as track_name, ST_AsGeoJSON(ST_Simplify(#{intersection_clause}, #{simplification_factor})) AS geom_json")
           .where("gpx_tracks.visible = true")
           .where(intersection_where_clause)
 
