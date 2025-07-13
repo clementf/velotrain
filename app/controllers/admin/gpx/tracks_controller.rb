@@ -1,4 +1,5 @@
 class Admin::Gpx::TracksController < ApplicationController
+  layout 'admin'
   include Pagy::Backend
   
   before_action :set_gpx_track, only: %i[show edit update destroy]

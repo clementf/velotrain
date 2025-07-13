@@ -1,4 +1,6 @@
 class Admin::AreasController < ApplicationController
+  layout 'admin'
+  
   before_action :set_area, only: [:show, :edit, :update, :destroy]
 
   def index

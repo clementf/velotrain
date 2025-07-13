@@ -1,4 +1,6 @@
 class Admin::RegionalBikeRulesController < ApplicationController
+  layout 'admin'
+  
   before_action :set_regional_bike_rule, only: [:edit, :update, :destroy]
 
   def index

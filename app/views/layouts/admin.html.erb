@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>VeloTrain Admin</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
+
+    <%= combobox_style_tag %>
+    <%= stylesheet_link_tag "application", "maplibre", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="font-sans antialiased text-gray-800 bg-gray-50">
+    <div class="min-h-full">
+      <!-- Navigation -->
+      <%= render 'shared/admin_nav' %>
+      
+      <!-- Main content -->
+      <div class="py-10">
+        <main>
+          <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div id="flash">
+              <% flash.each do |key, value| %>
+                <div class="mb-4 rounded-md bg-blue-50 p-4" data-turbo-temporary>
+                  <div class="flex">
+                    <div class="ml-3">
+                      <p class="text-sm font-medium text-blue-800"><%= value %></p>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+            <%= yield %>
+          </div>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>
