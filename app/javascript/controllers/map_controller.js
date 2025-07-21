@@ -342,6 +342,25 @@ export default class extends Controller {
     const addAccommodations = async () => {
       let data = await fetchAccommodations();
 
+      if (!map.hasImage('bed-icon')) {
+        const size = 48; // Higher resolution for crisp rendering
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = size;
+        canvas.height = size;
+
+        // Create SVG string - keep viewBox at 24 but render at higher resolution
+        const bedSvg = `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 11h-1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6H3a1 1 0 0 1-.707-1.707l7-7Z" fill="#E66A5F" stroke="white" stroke-width="1.5" clip-rule="evenodd"></path></svg>`;
+
+        const img = new Image();
+        img.onload = function() {
+          ctx.drawImage(img, 0, 0, size, size);
+          const imageData = ctx.getImageData(0, 0, size, size);
+          map.addImage('bed-icon', imageData, { pixelRatio: 2 });
+        };
+        img.src = 'data:image/svg+xml;base64,' + btoa(bedSvg);
+      }
+
       map.addSource("accommodations", {
         type: "geojson",
         data: data,
@@ -350,15 +369,14 @@ export default class extends Controller {
       map.addLayer(
         {
           id: "accommodations",
-          type: "circle",
+          type: "symbol",
           source: "accommodations",
-          paint: {
-            "circle-color": "#E66A5F",
-            "circle-radius": 5,
-            "circle-opacity": 1,
-            "circle-stroke-width": 1,
-            "circle-stroke-color": "#ffffff",
-            "circle-stroke-opacity": 0.8,
+          layout: {
+            "icon-image": "bed-icon",
+            "icon-size": 0.7,
+            "icon-anchor": "center",
+            "icon-allow-overlap": true,
+            "icon-ignore-placement": true,
           },
         },
         firstSymbolId,
