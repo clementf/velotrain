@@ -34,13 +34,16 @@ module Api
 
     def show
       @accommodation = Accommodation.find(params[:id])
-      
+
       # Record the outbound click
       OutboundClick.create!(accommodation: @accommodation)
-      
+
       # Redirect to the accommodation's URL
       if @accommodation.url.present?
-        redirect_to @accommodation.url, allow_other_host: true
+        utm_params = {
+          utm_source: "velotrain",
+        }
+        redirect_to "#{@accommodation.url}&#{utm_params.to_query}", allow_other_host: true
       else
         head :not_found
       end
