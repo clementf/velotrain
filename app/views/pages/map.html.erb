@@ -179,20 +179,18 @@
           <span aria-hidden="true" class="absolute left-0 inline-block w-5 h-5 bg-white border rounded-full shadow pointer-events-none border-accent slider-fg translate-x-0 transform ring-0 transition-transform duration-200 ease-in-out"></span>
         </button>
       </div>
-      <% if cookies[:show_accommodations] == 'true' %>
-        <div class="flex items-center justify-between mt-2 mb-2">
-          <span class="flex flex-col flex-grow">
-            <span class="text-xs font-semibold text-gray-700">Afficher les hébergements</span>
-          </span>
+      <div class="flex items-center justify-between mt-2 mb-2">
+        <span class="flex flex-col flex-grow">
+          <span class="text-xs font-semibold text-gray-700">Afficher les hébergements</span>
+        </span>
 
-          <button type="button" class="relative inline-flex items-center justify-center flex-shrink-0 w-10 h-5 rounded-full cursor-pointer group focus:outline-none focus:ring-2 focus:accent-dark focus:ring-offset-2" role="switch" aria-checked="false" data-action="click->map-filters#toggleAccommodations">
-            <span class="sr-only">Afficher les hébergements</span>
-            <span aria-hidden="true" class="absolute w-full h-full pointer-events-none rounded-md"></span>
-            <span aria-hidden="true" class="absolute h-4 mx-auto bg-gray-200 rounded-full pointer-events-none w-9 transition-colors duration-200 ease-in-out slider-bg"></span>
-            <span aria-hidden="true" class="absolute left-0 inline-block w-5 h-5 bg-white border rounded-full shadow pointer-events-none border-accent slider-fg translate-x-0 transform ring-0 transition-transform duration-200 ease-in-out"></span>
-          </button>
-        </div>
-      <% end %>
+        <button type="button" class="relative inline-flex items-center justify-center flex-shrink-0 w-10 h-5 rounded-full cursor-pointer group focus:outline-none focus:ring-2 focus:accent-dark focus:ring-offset-2" role="switch" aria-checked="false" data-action="click->map-filters#toggleAccommodations">
+          <span class="sr-only">Afficher les hébergements</span>
+          <span aria-hidden="true" class="absolute w-full h-full pointer-events-none rounded-md"></span>
+          <span aria-hidden="true" class="absolute h-4 mx-auto bg-gray-200 rounded-full pointer-events-none w-9 transition-colors duration-200 ease-in-out slider-bg"></span>
+          <span aria-hidden="true" class="absolute left-0 inline-block w-5 h-5 bg-white border rounded-full shadow pointer-events-none border-accent slider-fg translate-x-0 transform ring-0 transition-transform duration-200 ease-in-out"></span>
+        </button>
+      </div>
       <div class="mt-2">
         <div class="flex mb-1 gap-x-1">
           <span class="bg-[#60d394]/80 rounded w-6 h-3"></span>
