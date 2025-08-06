@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["container", "upButton", "downButton", "resultsContainer"];
+  static targets = ["container", "resultsContainer"];
   static values = { collapsed: Boolean };
 
   connect() {
@@ -23,7 +23,6 @@ export default class extends Controller {
     if (this.isMobile()) {
       this.collapsedValue = true;
       this.updateContainerPosition();
-      this.updateButtonVisibility();
     }
   }
 
@@ -48,23 +47,12 @@ export default class extends Controller {
         this.resultsContainerTarget.style.pointerEvents = 'none';
       }
     } else {
-      container.style.transform = 'translateY(0px)';
+      container.style.transform = 'translateY(10px)';
       // Re-enable scrolling when expanded
       if (this.hasResultsContainerTarget) {
         this.resultsContainerTarget.style.overflow = '';
         this.resultsContainerTarget.style.pointerEvents = '';
       }
-    }
-  }
-
-  updateButtonVisibility() {
-
-    if (this.collapsedValue) {
-      this.upButtonTarget.classList.remove('hidden');
-      this.downButtonTarget.classList.add('hidden');
-    } else {
-      this.upButtonTarget.classList.add('hidden');
-      this.downButtonTarget.classList.remove('hidden');
     }
   }
 
@@ -181,7 +169,6 @@ export default class extends Controller {
     }
 
     this.updateContainerPosition();
-    this.updateButtonVisibility();
   }
 
   getCurrentTransform() {
